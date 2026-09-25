@@ -177,7 +177,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
 
 ## 4. The contracts
 
-The contracts now live in [`SPEC.md`](SPEC.md) and are no longer duplicated here: envelope, catalog, lifecycles, legality table, profiles, refusal codes, API, fixtures and acceptance tests. Part I is the **core**, which every adopting hive runs. Part II is the **`1-hive` profile**: goals, proposals, leases, supervision, cost.
+The contracts now live in [`hive-record/SPEC.md`](https://github.com/1-hive/hive-record/blob/main/SPEC.md) and are no longer duplicated here: envelope, catalog, lifecycles, legality table, profiles, refusal codes, API, fixtures and acceptance tests. Part I is the **core**, which every adopting hive runs. Part II is the **`1-hive` profile**: goals, proposals, leases, supervision, cost.
 
 SPEC.md Appendix A lists where the spec departs from this plan's earlier drafts, e.g. one log per hive instead of per-run logs.
 
