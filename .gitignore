@@ -1,0 +1,3 @@
+# Private communications (position notes, replies to people). Never commit.
+docs/position-*.md
+private/
