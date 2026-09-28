@@ -1,0 +1,43 @@
+{
+  "actors": [
+    {
+      "actor_id": "cos",
+      "class": "chief_of_staff",
+      "role": "chief-of-staff",
+      "keys": [
+        "ed25519:cLrluoHBUzsNXYhh7-yosv3XyHx_151VbLgTV73dnB4"
+      ],
+      "declaration": {
+        "harness": "claude-code",
+        "model_route": "claude-opus-5-5",
+        "sandbox": "none (operator user; containers in Phase E)"
+      }
+    },
+    {
+      "actor_id": "worker.claude.1",
+      "class": "worker",
+      "role": "mtg-researcher",
+      "keys": [
+        "ed25519:TC1v2Pf1hD0DBM2sZn2Bg8Rlr9Twso_s7b6GQXiIfug"
+      ],
+      "declaration": {
+        "harness": "claude-code",
+        "model_route": "claude-opus-5-5",
+        "sandbox": "none (operator user; containers in Phase E)"
+      }
+    },
+    {
+      "actor_id": "reviewer.codex.1",
+      "class": "reviewer",
+      "role": "reviewer",
+      "keys": [
+        "ed25519:lmsKmwpUux-IuoPPiw7zV7w0QpvcGlHP-8r9A3V8EOg"
+      ],
+      "declaration": {
+        "harness": "codex",
+        "model_route": "codex-default",
+        "sandbox": "none (operator user; containers in Phase E)"
+      }
+    }
+  ]
+}

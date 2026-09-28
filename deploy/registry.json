@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "repositories": {
+    "hive-record": {
+      "fetch_urls": ["https://github.com/1-hive/hive-record.git"],
+      "object_format": "sha1",
+      "allowed_ref_patterns": ["refs/heads/main", "refs/tags/*"],
+      "local_path": "~/repos/hive-record"
+    },
+    "workspace": {
+      "fetch_urls": ["file:///home/omegahive/repos/hive-workspace.git"],
+      "object_format": "sha1",
+      "allowed_ref_patterns": ["refs/heads/*"],
+      "local_path": "~/workspaces/hive"
+    },
+    "mtg-player": {
+      "fetch_urls": ["file:///home/omegahive/repos/mtg-player.git"],
+      "object_format": "sha1",
+      "allowed_ref_patterns": ["refs/heads/*"],
+      "local_path": "~/src/SNET/mtg-player"
+    }
+  }
+}

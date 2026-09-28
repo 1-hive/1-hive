@@ -1,0 +1,18 @@
+# 1-hive record database. Loopback only; the gateway is the only writer.
+# Superuser password comes from ~/.config/hive/1-hive-pg.env (never in git).
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    container_name: 1hive-pg
+    env_file: ${HOME}/.config/hive/1-hive-pg.env
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - 1hive-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+volumes:
+  1hive-pgdata:
