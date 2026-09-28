@@ -235,10 +235,14 @@ Ordered by dependency and quality gates. No calendar estimates.
 5. **Exit:** the whole suite is green.
 
 **Phase D — 1-hive deployment.**
-1. Rootless Podman under a dedicated user; Postgres loopback-only; the gateway as a user service; secrets outside the repositories.
-2. Register the `mtg-player` workspace in the `hivepin` registry; open the run with a pinned policy; register the actors.
-3. Backups and a restore drill.
-4. **Exit:** an end-to-end manual goal → task → review → close on scratch, then on the real run.
+1. **Declared, not hand-built.** Everything needed to rebuild 1-hive lives in this repo under `deploy/`: the containers (Postgres, gateway), the hivepin repository registry, the actor list with public keys only, and the init steps. Secrets and private keys stay outside every repo.
+2. **Record:** rootless Podman; Postgres loopback-only, in its own container (not shared with the old `omegahive-pg`); the gateway as a user service; the `1-hive` profile, pinned from `hive-record/policy`, authoritative mode.
+3. **Local git service, no hosting needed.** Pins need commits pushed to a trusted remote, and a local bare repository is enough. Agents reach it through the host's sshd, not a shared folder: each actor's SSH key is restricted in `authorized_keys` to a small wrapper (`hive-git-shell <actor>`) around `git-shell`. A `pre-receive` hook limits each actor to its own branch namespace, and `receive.denyDeletes` and `receive.denyNonFastForwards` protect shared branches, so no worker can make a pinned commit unreachable.
+4. **Register** the `mtg-player` workspace and code repositories in the registry; register the actors (operator, coordinator, workers, reviewer), each with its own key.
+5. **Reset procedure (`deploy/reset.sh`).** For when a gateway bug leaves bad data in the log, or a spec amendment changes the event format. Policy fixes, code fixes and wrong moves don't need it: those are `hive.policy_changed`, a gateway restart, or a new event or exception. A reset (a) exports and archives the old log with a dated name, (b) drops the database, (c) runs `hive init` again, and (d) re-registers the actors with the same public keys. The git repositories are untouched, so every pin keeps working. Risky experiments run on `hive scratch` hives instead.
+6. **Backups:** deferred for now. Until they exist, a disk failure loses both the log and the workspace.
+7. **Known gaps while there is no dedicated OS user** (creating one needs the operator's sudo): agents run as the operator's user, so key custody (SPEC §6.6) relies on separate containers only.
+8. **Exit:** an end-to-end goal → task → review → close on a scratch hive, then on the real 1-hive with real `mtg-player` work.
 
 **Phase E — The operating loop (minimal, for 1-hive).**
 Each piece below is its own repo (D16) and depends only on the record's HTTP API and schemas.
