@@ -38,6 +38,19 @@
         "model_route": "codex-default",
         "sandbox": "none (operator user; containers in Phase E)"
       }
+    },
+    {
+      "actor_id": "reviewer.claude.1",
+      "class": "reviewer",
+      "role": "reviewer",
+      "keys": [
+        "ed25519:wOGcsBp49_kUQGHb2H3CMUxeR_rseI5zzaw_ZLz6ZlA"
+      ],
+      "declaration": {
+        "harness": "claude-code",
+        "model_route": "claude-sonnet-5",
+        "sandbox": "none (operator user; containers in Phase E)"
+      }
     }
   ]
 }
