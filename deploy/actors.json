@@ -51,6 +51,19 @@
         "model_route": "claude-sonnet-5",
         "sandbox": "none (operator user; containers in Phase E)"
       }
+    },
+    {
+      "actor_id": "router",
+      "class": "instrument",
+      "role": "router",
+      "keys": [
+        "ed25519:jEcz8HJiae9tEaoKDIOfKwWq7Ga0fS3o1ME0UNvJ6Vw"
+      ],
+      "declaration": {
+        "harness": "hive-route",
+        "model_route": "none (deterministic; scorer qwen3:8b on Ollama)",
+        "sandbox": "none (operator user)"
+      }
     }
   ]
 }

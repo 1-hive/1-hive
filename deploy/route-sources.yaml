@@ -18,3 +18,4 @@ harnesses:
     argv: [codex, exec, --approve-for-me, --skip-git-repo-check, --cd, "{cwd}", -m, "{model}", "-"]
     effort_args: [-c, "model_reasoning_effort={effort}"]
     stdin: true
+    aux_models: [codex-auto-review]   # Codex's approval reviewer (--approve-for-me), not drift
