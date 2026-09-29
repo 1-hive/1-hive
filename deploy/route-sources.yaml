@@ -4,7 +4,7 @@ format: hive-route.sources/1
 fresh_minutes: 30
 qualifications: ~/work/1hive/route-qualifications.json
 pools:
-  claude-plan:  [{reader: claude-stream, paths: ["~/work/1hive/*/worker-*.jsonl", "~/work/1hive/canary/*/*.out"]}]
+  claude-plan:  [{reader: claude-stream, paths: ["~/work/1hive/*/worker-*.jsonl", "~/work/1hive/*/review-*.jsonl", "~/work/1hive/canary/*/*.out"]}]
   chatgpt-plan: [{reader: codex-sessions, paths: ["~/.codex/sessions"]}]
 
 # Canaries (ROUTING.md §3): `hive-route canary run` starts harnesses with these commands,
