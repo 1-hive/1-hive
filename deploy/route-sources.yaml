@@ -1,0 +1,8 @@
+# Where hive-route reads 1-hive's pool usage and route qualifications (ROUTING.md §7).
+# tools/launch-task.sh passes this to `hive-route decide --sources`.
+format: hive-route.sources/1
+fresh_minutes: 30
+qualifications: ~/work/1hive/route-qualifications.json
+pools:
+  claude-plan:  [{reader: claude-stream, paths: ["~/work/1hive/*/worker-*.jsonl"]}]
+  chatgpt-plan: [{reader: codex-sessions, paths: ["~/.codex/sessions"]}]
