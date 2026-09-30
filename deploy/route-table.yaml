@@ -14,8 +14,11 @@
 #   medium effort as opus-std in standard; candidates that didn't qualify removed.
 # Version 8: Anthropic API pool (metered, $10/month, $1/attempt), last in strong and standard.
 # Version 9: $5 per attempt (a real Opus attempt costs more than $1); still a $10/month test cap.
+# Version 10: SingularityCompute routes paused (out of the tiers, still defined and qualified): Claude
+#   Code's auto-mode safety classifier runs on the session's model, so a slow self-hosted model times
+#   out its own safety checks and actions get refused.
 format: hive-route.table/1
-version: 9
+version: 10
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
@@ -41,8 +44,8 @@ routes:
   qwen-local:   {tier: local,    pool: local-gpu,    family: qwen,   harness: ollama, endpoint: "http://127.0.0.1:11434", model: "qwen3:8b", tools: false}
 tiers:
   strong:   [opus-plan, gpt-astra-high, api-opus]
-  standard: [sc-deepseek-v4, opus-std, sonnet-plan, gpt-sol-plan, api-sonnet]
-  light:    [sc-qwen3.8-27b, sonnet-low, gpt-sol-low]
+  standard: [opus-std, sonnet-plan, gpt-sol-plan, api-sonnet]
+  light:    [sonnet-low, gpt-sol-low]
   local:    [qwen-local]
 # The scorer (§4.3) estimates unknown task facts on the local model; shadow: logged, not used.
 scorer: {route: qwen-local, mode: shadow, max_output_tokens: 800, timeout_s: 90}
