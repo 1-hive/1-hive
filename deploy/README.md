@@ -10,6 +10,7 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `actors.json` | The agent actors, with **public** keys only |
 | `up.sh` | Bring 1-hive up; every step is skipped when already done |
 | `register-actors.sh` | Register new actors from `actors.json`. Run by the operator; signs with `~/.config/hive/operator.key` |
+| `apply-policy.sh [reason]` | Move the running hive to the policy at `HIVE_RECORD_REF` with a recorded `hive.policy_changed`. Run by the operator |
 | `reset.sh --yes-destroy-the-log` | Start fresh: archive the log to `~/.local/share/1-hive/archive/`, destroy the database, run `up.sh`. Git repositories are untouched |
 
 The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`.

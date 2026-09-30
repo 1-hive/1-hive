@@ -64,6 +64,19 @@
         "model_route": "none (deterministic; scorer qwen3:8b on Ollama)",
         "sandbox": "none (operator user)"
       }
+    },
+    {
+      "actor_id": "supervisor",
+      "class": "supervisor",
+      "role": "supervisor",
+      "keys": [
+        "ed25519:KgMxTp_Y75yI2rGbJ2MgYOjatkipJaYSBz0KvVWu1IM"
+      ],
+      "declaration": {
+        "harness": "script",
+        "model_route": "none",
+        "sandbox": "none (operator user)"
+      }
     }
   ]
 }
