@@ -6,6 +6,12 @@ qualifications: ~/work/1hive/route-qualifications.json
 pools:
   claude-plan:  [{reader: claude-stream, paths: ["~/work/1hive/*/worker-*.jsonl", "~/work/1hive/*/review-*.jsonl", "~/work/1hive/canary/*/*.out"]}]
   chatgpt-plan: [{reader: codex-sessions, paths: ["~/.codex/sessions"]}]
+  # SingularityCompute: down (no 2xx from its model list) means at a limit for 5 minutes,
+  # so each tier falls back to the paid plans.
+  singularity:  [{reader: http-health, paths: ["https://llm.a.singularitycompute.com/v1/models"], key_env: SINGULARITY_API_KEY, env_file: ~/.config/hive/singularity.env, down_minutes: 5}]
+
+# The hive gateway (deploy/gateway-up.sh), for routes with via_gateway.
+gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env}
 
 # Canaries (ROUTING.md §3): `hive-route canary run` starts harnesses with these commands,
 # the same way tools/launch-task.sh does, in a scratch folder per case.
@@ -14,8 +20,12 @@ harnesses:
   claude-code:
     argv: [claude, -p, --model, "{model}", --permission-mode, auto, --output-format, stream-json, --verbose, "{prompt}"]
     effort_args: [--effort, "{effort}"]
+    gateway_env: {ANTHROPIC_BASE_URL: "{gateway_url}", ANTHROPIC_AUTH_TOKEN: "{gateway_key}", ANTHROPIC_API_KEY: ""}
   codex:
     argv: [codex, exec, --approve-for-me, --skip-git-repo-check, --cd, "{cwd}", -m, "{model}", "-"]
     effort_args: [-c, "model_reasoning_effort={effort}"]
     stdin: true
-    aux_models: [codex-auto-review]   # Codex's approval reviewer (--approve-for-me), not drift
+    aux_models: [codex-auto-review]
+    gateway_args: [-c, 'model_providers.hivegw.name="hive gateway"', -c, 'model_providers.hivegw.base_url="{gateway_url}/v1"',
+                   -c, 'model_providers.hivegw.env_key="{key_env}"', -c, 'model_providers.hivegw.wire_api="responses"',
+                   -c, 'model_provider="hivegw"']   # Codex's approval reviewer (--approve-for-me), not drift
