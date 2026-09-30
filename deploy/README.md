@@ -13,6 +13,6 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `apply-policy.sh [reason]` | Move the running hive to the policy at `HIVE_RECORD_REF` with a recorded `hive.policy_changed`. Run by the operator |
 | `reset.sh --yes-destroy-the-log` | Start fresh: archive the log to `~/.local/share/1-hive/archive/`, destroy the database, run `up.sh`. Git repositories are untouched |
 
-The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`.
+The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`. The supervisor (`tools/supervisor.py`) runs as `1-hive-supervisor.service`: it nudges silent workers, restarts dead or stalled ones with context generated from the record, and escalates to the chief of staff. Everything it does is recorded under the actor `supervisor`. Logs: `journalctl --user -u 1-hive-supervisor`.
 
 Known gap: agents run as the operator's OS user until a dedicated user exists, so key custody (SPEC §6.6) rests on separate key files only.

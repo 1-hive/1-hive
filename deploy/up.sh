@@ -3,10 +3,10 @@
 source "$(dirname "$0")/lib.sh"
 mkdir -p "$HIVE_CONFIG_DIR" && chmod 700 "$HIVE_CONFIG_DIR"
 
-log "hive-record $HIVE_RECORD_REF (the hive and hive-pin commands)"
+log "hive-record ${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF} (the hive and hive-pin commands)"
 uv tool install -q --force --with-executables-from hivepin \
-  "git+https://github.com/1-hive/hive-record@$HIVE_RECORD_REF"
-SOURCE_COMMIT=$(git ls-remote https://github.com/1-hive/hive-record "refs/tags/$HIVE_RECORD_REF^{}" | cut -f1)
+  "git+https://github.com/1-hive/hive-record@${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}"
+SOURCE_COMMIT=$(git ls-remote https://github.com/1-hive/hive-record "refs/tags/${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}^{}" | cut -f1)
 
 if [ ! -f "$PG_ENV" ]; then
   log "new Postgres superuser password"
@@ -63,3 +63,21 @@ systemctl --user enable -q "$UNIT"
 systemctl --user restart "$UNIT"
 for _ in $(seq 30); do hive health >/dev/null 2>&1 && break; sleep 1; done
 hive health
+
+log "supervisor user service"
+cat > "$HOME/.config/systemd/user/1-hive-supervisor.service" <<UNIT
+[Unit]
+Description=1-hive supervisor (keeps tasks moving; signs as actor supervisor)
+After=$UNIT
+
+[Service]
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/supervisor.py --interval 60
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable -q 1-hive-supervisor.service
+systemctl --user restart 1-hive-supervisor.service
