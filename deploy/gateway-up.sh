@@ -73,9 +73,12 @@ ALIASES=$(uv run -q --frozen --project /home/omegahive/repos/hive-route python -
 import json, sys
 from hiveroute.table import load_table
 t = load_table(sys.argv[1])
-print(json.dumps(sorted(r for r, v in t.routes.items() if v.get("via_gateway"))))' "$DEPLOY_DIR/route-table.yaml")
+# Only routes the router can choose (in a tier): a paused route is not callable with the worker key.
+live = {r for ids in t.data["tiers"].values() for r in ids}
+print(json.dumps(sorted(r for r, v in t.routes.items() if v.get("via_gateway") and r in live)))' "$DEPLOY_DIR/route-table.yaml")
 WKEY=$(sed -n 's/^HIVE_WORKER_KEY=//p' "$CONF/gateway.env")
 if [ -z "$WKEY" ]; then
+  [ "$ALIASES" != "[]" ] || ALIASES='["no-live-routes"]'
   WKEY=$(curl -s -X POST 127.0.0.1:4000/key/generate -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
     -d "$(jq -n --argjson m "$ALIASES" '{key_alias: "hive-workers", models: $m, metadata: {purpose: "launched agents: model calls only"}}')" | jq -r '.key // empty')
   [ -n "$WKEY" ] || { echo "couldn't create the worker key" >&2; exit 3; }
@@ -84,7 +87,17 @@ else  # keep its model list in step with the table
   curl -s -X POST 127.0.0.1:4000/key/update -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
     -d "$(jq -n --arg k "$WKEY" --argjson m "$ALIASES" '{key: $k, models: $m}')" >/dev/null
 fi
-echo "   hive-workers may call: $(jq -r 'join(", ")' <<<"$ALIASES")"
+# LiteLLM reads an empty model list as "every model", so with no live gateway routes the key
+# is blocked instead.
+if [ "$ALIASES" = "[]" ]; then
+  curl -s -X POST 127.0.0.1:4000/key/block -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
+    -d "$(jq -n --arg k "$WKEY" '{key: $k}')" >/dev/null
+  echo "   hive-workers: blocked (no live gateway routes)"
+else
+  curl -s -X POST 127.0.0.1:4000/key/unblock -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
+    -d "$(jq -n --arg k "$WKEY" '{key: $k}')" >/dev/null
+  echo "   hive-workers may call: $(jq -r 'join(", ")' <<<"$ALIASES")"
+fi
 
 echo "== budgets for metered pools (tag budgets, from the route table)"
 uv run -q --frozen --project /home/omegahive/repos/hive-route hive-route gateway-config \

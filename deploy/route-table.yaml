@@ -19,7 +19,7 @@
 #   out its own safety checks and actions get refused.
 # Version 11: api-opus and api-sonnet out of the tiers: the operator doesn't want the Anthropic API key used for now. They stay defined.
 format: hive-route.table/1
-version: 10
+version: 11
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
