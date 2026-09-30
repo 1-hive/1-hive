@@ -8,8 +8,10 @@
 # Version 3: a local model (Ollama on the host's GPU) for the scorer.
 # Version 4: sonnet-low replaces haiku-plan, whose edits Claude Code's auto permission mode refuses.
 # Version 5: SingularityCompute models first in the standard and light tiers, through the gateway.
+# Version 6: sc-gpt-oss-120b on Claude Code: Codex (0.158) only offers apply_patch as a freeform tool,
+#   which doesn't survive the gateway's translation to chat completions, so it couldn't edit files.
 format: hive-route.table/1
-version: 5
+version: 6
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
@@ -27,7 +29,7 @@ routes:
   gpt-sol-low:  {tier: light,    pool: chatgpt-plan, family: gpt,    harness: codex, model: gpt-5.6-sol, effort: low, tools: true}
   sc-deepseek-v4:  {tier: standard, pool: singularity, family: deepseek, harness: claude-code, model: deepseek/deepseek-v4-flash-0731, gateway_model: custom_openai/deepseek/deepseek-v4-flash-0731, endpoint: "https://llm.a.singularitycompute.com/v1", via_gateway: true, tools: true}
   sc-minimax-m3:   {tier: standard, pool: singularity, family: minimax,  harness: claude-code, model: minimax/minimax-m3, gateway_model: custom_openai/minimax/minimax-m3, endpoint: "https://llm.a.singularitycompute.com/v1", via_gateway: true, tools: true}
-  sc-gpt-oss-120b: {tier: light,    pool: singularity, family: gpt-oss,  harness: codex,       model: openai/gpt-oss-120b, gateway_model: custom_openai/openai/gpt-oss-120b, endpoint: "https://llm.a.singularitycompute.com/v1", via_gateway: true, tools: true}
+  sc-gpt-oss-120b: {tier: light,    pool: singularity, family: gpt-oss,  harness: claude-code, model: openai/gpt-oss-120b, gateway_model: custom_openai/openai/gpt-oss-120b, endpoint: "https://llm.a.singularitycompute.com/v1", via_gateway: true, tools: true}
   sc-qwen3.8-27b:  {tier: light,    pool: singularity, family: qwen,     harness: claude-code, model: qwen/qwen3.8-27b, gateway_model: custom_openai/qwen/qwen3.8-27b, endpoint: "https://llm.a.singularitycompute.com/v1", via_gateway: true, tools: true}
   qwen-local:   {tier: local,    pool: local-gpu,    family: qwen,   harness: ollama, endpoint: "http://127.0.0.1:11434", model: "qwen3:8b", tools: false}
 tiers:
