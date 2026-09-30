@@ -17,7 +17,7 @@
 # Version 10: SingularityCompute routes paused (out of the tiers, still defined and qualified): Claude
 #   Code's auto-mode safety classifier runs on the session's model, so a slow self-hosted model times
 #   out its own safety checks and actions get refused.
-# Version 11: api-opus and api-sonnet out of the tiers: the operator doesn't want the Anthropic API key used for now. They stay defined.
+# Version 11: api-opus and api-sonnet briefly out of the tiers by mistake, then restored (the operator's API-key restriction is for the MTG LLM player, not the router).
 format: hive-route.table/1
 version: 11
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
@@ -44,8 +44,8 @@ routes:
   api-sonnet:   {tier: standard, pool: anthropic-api, family: claude, harness: claude-code, model: claude-sonnet-5-5, gateway_model: anthropic/claude-sonnet-5-5, via_gateway: true, price: {in: 2, out: 10}, tools: true}
   qwen-local:   {tier: local,    pool: local-gpu,    family: qwen,   harness: ollama, endpoint: "http://127.0.0.1:11434", model: "qwen3:8b", tools: false}
 tiers:
-  strong:   [opus-plan, gpt-astra-high]   # api-opus paused: no Anthropic API key use for now (operator, 2026-09-30)
-  standard: [opus-std, sonnet-plan, gpt-sol-plan]   # api-sonnet paused, same reason
+  strong:   [opus-plan, gpt-astra-high, api-opus]
+  standard: [opus-std, sonnet-plan, gpt-sol-plan, api-sonnet]
   light:    [sonnet-low, gpt-sol-low]
   local:    [qwen-local]
 # The scorer (§4.3) estimates unknown task facts on the local model; shadow: logged, not used.
