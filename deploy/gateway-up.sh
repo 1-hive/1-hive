@@ -66,3 +66,14 @@ systemctl --user enable -q "$UNIT"
 systemctl --user restart "$UNIT"
 for _ in $(seq 120); do curl -s -o /dev/null -w '%{http_code}' 127.0.0.1:4000/health/liveliness | grep -q 200 && break; sleep 2; done
 echo "== up: $(curl -s 127.0.0.1:4000/health/liveliness)"
+
+echo "== budgets for metered pools (tag budgets, from the route table)"
+GWKEY=$(sed -n 's/^HIVE_GATEWAY_KEY=//p' "$CONF/gateway.env")
+uv run -q --frozen --project /home/omegahive/repos/hive-route hive-route gateway-config \
+  "$DEPLOY_DIR/route-table.yaml" --budgets | jq -c '.[]' | while IFS= read -r b; do
+  name=$(jq -r .name <<<"$b")
+  r=$(curl -s -X POST 127.0.0.1:4000/tag/update -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' -d "$b")
+  jq -e '.name // .tag.name // .message' <<<"$r" >/dev/null 2>&1 && grep -qv -i 'not found\|does not exist' <<<"$r" ||
+    r=$(curl -s -X POST 127.0.0.1:4000/tag/new -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' -d "$b")
+  echo "   $name: $(jq -c '{max_budget: ($b.max_budget), duration: ($b.budget_duration)}' --argjson b "$b" -n) $(jq -r '.message // .detail // "ok"' <<<"$r" | head -c 80)"
+done
