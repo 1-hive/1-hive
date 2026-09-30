@@ -67,8 +67,26 @@ systemctl --user restart "$UNIT"
 for _ in $(seq 120); do curl -s -o /dev/null -w '%{http_code}' 127.0.0.1:4000/health/liveliness | grep -q 200 && break; sleep 2; done
 echo "== up: $(curl -s 127.0.0.1:4000/health/liveliness)"
 
-echo "== budgets for metered pools (tag budgets, from the route table)"
+echo "== worker key (model calls only; the master key stays here for admin and spend reads)"
 GWKEY=$(sed -n 's/^HIVE_GATEWAY_KEY=//p' "$CONF/gateway.env")
+ALIASES=$(uv run -q --frozen --project /home/omegahive/repos/hive-route python -c '
+import json, sys
+from hiveroute.table import load_table
+t = load_table(sys.argv[1])
+print(json.dumps(sorted(r for r, v in t.routes.items() if v.get("via_gateway"))))' "$DEPLOY_DIR/route-table.yaml")
+WKEY=$(sed -n 's/^HIVE_WORKER_KEY=//p' "$CONF/gateway.env")
+if [ -z "$WKEY" ]; then
+  WKEY=$(curl -s -X POST 127.0.0.1:4000/key/generate -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
+    -d "$(jq -n --argjson m "$ALIASES" '{key_alias: "hive-workers", models: $m, metadata: {purpose: "launched agents: model calls only"}}')" | jq -r '.key // empty')
+  [ -n "$WKEY" ] || { echo "couldn't create the worker key" >&2; exit 3; }
+  ( umask 077; printf 'HIVE_WORKER_KEY=%s\n' "$WKEY" >> "$CONF/gateway.env" )
+else  # keep its model list in step with the table
+  curl -s -X POST 127.0.0.1:4000/key/update -H "Authorization: Bearer $GWKEY" -H 'Content-Type: application/json' \
+    -d "$(jq -n --arg k "$WKEY" --argjson m "$ALIASES" '{key: $k, models: $m}')" >/dev/null
+fi
+echo "   hive-workers may call: $(jq -r 'join(", ")' <<<"$ALIASES")"
+
+echo "== budgets for metered pools (tag budgets, from the route table)"
 uv run -q --frozen --project /home/omegahive/repos/hive-route hive-route gateway-config \
   "$DEPLOY_DIR/route-table.yaml" --budgets | jq -c '.[]' | while IFS= read -r b; do
   name=$(jq -r .name <<<"$b")

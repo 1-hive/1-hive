@@ -13,7 +13,7 @@ pools:
   anthropic-api: [{reader: gateway-spend, paths: ["http://127.0.0.1:4000"], key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env}]
 
 # The hive gateway (deploy/gateway-up.sh), for routes with via_gateway.
-gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env}
+gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_WORKER_KEY, env_file: ~/.config/hive/gateway.env}   # model calls only
 
 # Canaries (ROUTING.md §3): `hive-route canary run` starts harnesses with these commands,
 # the same way tools/launch-task.sh does, in a scratch folder per case.
