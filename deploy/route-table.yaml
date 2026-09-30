@@ -18,8 +18,9 @@
 #   Code's auto-mode safety classifier runs on the session's model, so a slow self-hosted model times
 #   out its own safety checks and actions get refused.
 # Version 11: api-opus and api-sonnet briefly out of the tiers by mistake, then restored (the operator's API-key restriction is for the MTG LLM player, not the router).
+# Version 12: the same tiers as version 10 (API routes in); a new version number for the restored table.
 format: hive-route.table/1
-version: 11
+version: 12
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
