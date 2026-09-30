@@ -1,0 +1,20 @@
+# The hive gateway's database (LiteLLM: virtual keys, spend logs, budgets). Loopback only,
+# separate from the record's. Password from ~/.config/hive/gateway-pg.env (never in git).
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    container_name: hive-gw-pg
+    env_file: ${HOME}/.config/hive/gateway-pg.env
+    environment:
+      POSTGRES_DB: litellm
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - hive-gw-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+volumes:
+  hive-gw-pgdata:
