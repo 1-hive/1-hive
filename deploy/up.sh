@@ -81,3 +81,24 @@ UNIT
 systemctl --user daemon-reload
 systemctl --user enable -q 1-hive-supervisor.service
 systemctl --user restart 1-hive-supervisor.service
+
+if [ -s "$HIVE_CONFIG_DIR/telegram-token" ] && [ -s "$HIVE_CONFIG_DIR/telegram.json" ] && [ -f "$HIVE_CONFIG_DIR/telegram-bridge.key" ]; then
+  log "telegram bridge user service"
+  cat > "$HOME/.config/systemd/user/1-hive-telegram.service" <<UNIT
+[Unit]
+Description=1-hive Telegram bridge (operator inbox and buttons; signs with its own operator key)
+After=$UNIT
+
+[Service]
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/telegram-bridge.py
+EnvironmentFile=-$HIVE_CONFIG_DIR/telegram-bridge.env
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+UNIT
+  systemctl --user daemon-reload
+  systemctl --user enable -q 1-hive-telegram.service
+  systemctl --user restart 1-hive-telegram.service
+fi
