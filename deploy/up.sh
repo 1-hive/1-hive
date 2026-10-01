@@ -72,6 +72,8 @@ After=$UNIT
 
 [Service]
 ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/supervisor.py --interval 60
+# Workers the supervisor relaunches are its children: restarting the supervisor must not kill them.
+KillMode=process
 Restart=on-failure
 RestartSec=30
 
