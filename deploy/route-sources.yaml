@@ -10,9 +10,9 @@ pools:
   # so each tier falls back to the paid plans.
   singularity:  [{reader: http-health, paths: ["https://llm.a.singularitycompute.com/v1/models"], key_env: SINGULARITY_API_KEY, env_file: ~/.config/hive/singularity.env, down_minutes: 5}]
   # Anthropic API: spend this month, from the gateway's spend logs (tag pool:anthropic-api).
-  # and its key, against Anthropic's free model list: a rejected key (401/403) marks the pool down.
-  anthropic-api: [{reader: gateway-spend, paths: ["http://127.0.0.1:4000"], key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env},
-                  {reader: http-health, paths: ["https://api.anthropic.com/v1/models"], key_env: ANTHROPIC_API_KEY, env_file: ~/.config/hive/anthropic-api.env, auth_header: x-api-key, headers: {anthropic-version: "2023-06-01"}, down_minutes: 10}]
+  # Its key check (http-health against Anthropic's model list, with auth_header: x-api-key) is off
+  # while the pool is out of the tiers: the key was revoked and can't be renewed (table v13).
+  anthropic-api: [{reader: gateway-spend, paths: ["http://127.0.0.1:4000"], key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env}]
 
 # The hive gateway (deploy/gateway-up.sh), for routes with via_gateway.
 gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_WORKER_KEY, env_file: ~/.config/hive/gateway.env}   # model calls only
