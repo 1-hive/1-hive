@@ -1,0 +1,13 @@
+# 1-hive's own review canaries (ROUTING.md §3): cases distilled from real 1-hive reviews with known
+# verdicts (col-4 review rounds 1-3, col-7 review round 2), plus hive-route's two starter reviews (copied). Checks need the right verdict and a
+# reason that names the actual problem.
+format: hive-route.suite/1
+name: 1hive-reviews
+description: Two starter reviews (a change with a bug, one without) and four reviews from 1-hive's history; three with a real defect (a seed copied where seats can read it, a restore gate on a subset, a self-contradicting scope) and one clean fix.
+cases:
+  - {id: seed-archive-leak, kind: review, prompt: seed-archive-leak/PROMPT.md, files: seed-archive-leak/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}
+  - {id: restore-gate-subset, kind: review, prompt: restore-gate-subset/PROMPT.md, files: restore-gate-subset/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}
+  - {id: restore-gate-fixed, kind: review, prompt: restore-gate-fixed/PROMPT.md, files: restore-gate-fixed/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}
+  - {id: frozen-scope, kind: review, prompt: frozen-scope/PROMPT.md, files: frozen-scope/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}
+  - {id: review-buggy, kind: review, prompt: review-buggy/PROMPT.md, files: review-buggy/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}
+  - {id: review-clean, kind: review, prompt: review-clean/PROMPT.md, files: review-clean/files, check: [python3, "{case}/check.py"], timeout_minutes: 10}

@@ -25,6 +25,12 @@ harnesses:
     argv: [claude, -p, --model, "{model}", --permission-mode, auto, --output-format, stream-json, --verbose, "{prompt}"]
     effort_args: [--effort, "{effort}"]
     gateway_env: {ANTHROPIC_BASE_URL: "{gateway_url}", ANTHROPIC_AUTH_TOKEN: "{gateway_key}", ANTHROPIC_API_KEY: ""}
+  # Reviews on a route whose own model would otherwise judge its actions (auto mode asks the session's
+  # model): no model judges; a fixed allow list (deploy/review-allowlist.json), everything else denied.
+  claude-code-allowlist:
+    argv: [claude, -p, --model, "{model}", --permission-mode, dontAsk, --settings, /home/omegahive/repos/1-hive/deploy/review-allowlist.json, --output-format, stream-json, --verbose, "{prompt}"]
+    effort_args: [--effort, "{effort}"]
+    gateway_env: {ANTHROPIC_BASE_URL: "{gateway_url}", ANTHROPIC_AUTH_TOKEN: "{gateway_key}", ANTHROPIC_API_KEY: ""}
   codex:
     argv: [codex, exec, --approve-for-me, --skip-git-repo-check, --cd, "{cwd}", -m, "{model}", "-"]
     effort_args: [-c, "model_reasoning_effort={effort}"]
