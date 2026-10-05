@@ -13,6 +13,7 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `apply-policy.sh [reason]` | Move the running hive to the policy at `HIVE_RECORD_REF` with a recorded `hive.policy_changed`. Run by the operator |
 | `route-table.yaml`, `route-sources.yaml` | The router's table (routes, pools, tiers) and its sources (usage readers, harness commands, the qualifications file) |
 | `review-allowlist.json` | Claude Code permissions for the `claude-code-allowlist` harness (`--permission-mode dontAsk`): what a reviewer on a self-hosted route may do, with no model judging its actions. Not a sandbox: `python3` and `podman` reach what the OS user can |
+| `apply-registry.sh [reason]` | Move the running hive to `registry.json` (e.g. a newly registered repository) with a recorded `hive.registry_changed`, and restart the gateway to load it. Run by the operator |
 | `reset.sh --yes-destroy-the-log` | Start fresh: archive the log to `~/.local/share/1-hive/archive/`, destroy the database, run `up.sh`. Git repositories are untouched |
 
 The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`. The supervisor (`tools/supervisor.py`) runs as `1-hive-supervisor.service`: it nudges silent workers, restarts dead or stalled ones with context generated from the record, and escalates to the chief of staff. Everything it does is recorded under the actor `supervisor`. Logs: `journalctl --user -u 1-hive-supervisor`.
