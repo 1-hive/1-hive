@@ -22,7 +22,7 @@ The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0
 
 The Telegram bridge (`tools/telegram-bridge.py`) runs as `1-hive-telegram.service`. It pushes the operator's inbox: goals to approve or accept, and escalations to the operator. It also sends a **daily digest at 08:00 local time** (`--digest-at`), and `/digest` sends one on request. Each digest names the time of the next one, so a digest that doesn't arrive is the alarm. Nothing else is pushed. Logs: `journalctl --user -u 1-hive-telegram`.
 
-**Container runtime** (PLAN Phase E 1). With `runtime` set to `container`, each attempt runs in its own rootless Podman container (`hive-<task>-<role>-<n>`, removed when it ends). The container gets:
+**Container runtime** (PLAN Phase E 1; the default since 2026-10-06, goal `container-pilot`). With `runtime` set to `container`, each attempt runs in its own rootless Podman container (`hive-<task>-<role>-<n>`, removed when it ends). The container gets:
 - the task's folder, at the same path;
 - this actor's record key and git key, read-only;
 - the harness's credentials. For Claude Code this is `~/.config/hive/claude-oauth-token`, made with `claude setup-token`, never the operator's own login. For Codex it is the shared `~/.codex` login.
