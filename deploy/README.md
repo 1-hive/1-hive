@@ -33,7 +33,9 @@ It reaches the record, the model gateway and sshd at 10.0.2.2, the host's loopba
 **Agent users** (`deploy/agent-users.sh`, since 2026-10-06). Each actor has its own OS user (`hive-worker-claude-1`, …), and its containers run in that user's rootless Podman (`sudo -u <user> /usr/local/bin/hive-agent-podman`). An agent that escapes its container is that unprivileged user: it can't read the operator's files, other agents' keys or other tasks' folders. In detail:
 - **Keys and settings** reach the container as that user's Podman secrets, per attempt: the record key, the git key, `known_hosts`, the review allow-list, and the Claude token.
 - **Task folders:** the launcher grants the user only that task's folder (ACLs, which keep the operator's access too).
-- **Codex:** each Codex actor needs its own login, once. As the operator, run `sudo -u hive-reviewer-codex-1 /usr/local/bin/hive-agent-podman run --rm -it -v /var/lib/1hive-agents/hive-reviewer-codex-1/.codex:/root/.codex localhost/1hive-agent:latest codex login --device-auth`.
+- **Codex:** each Codex actor needs its own login, once. As the operator, run `sudo -u hive-reviewer-codex-1 /usr/local/bin/hive-agent-podman run --rm -it --network host -v /var/lib/1hive-agents/hive-reviewer-codex-1/.codex:/root/.codex localhost/1hive-agent:latest codex login`, then open the URL it prints.
+  - If the browser is on another device, the final redirect to `localhost:1455` fails there. Copy that whole address and run `curl '<address>'` on this machine while the login waits. Keep the quotes, so `&state=` survives.
+  - Use `codex login --device-auth` instead if the account allows device codes.
 - **The image** is copied into each user's storage when it changes.
 
 Without an agent user, the launcher falls back to the operator's Podman and the operator's Codex login.
