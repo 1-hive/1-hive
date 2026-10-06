@@ -30,10 +30,15 @@ The Telegram bridge (`tools/telegram-bridge.py`) runs as `1-hive-telegram.servic
 
 It reaches the record, the model gateway and sshd at 10.0.2.2, the host's loopback. Git goes over SSH as the actor: `tools/git/hive-git-shell` is the key's forced command, and the repositories' `pre-receive` hook lets agents create or fast-forward only `hive/*` branches and the workspace's `main`. No deletions, rewrites or tags. The agent runs as container root, which is the operator's user on the host, so it can run nested Podman for games. That includes bridge networks like the human-play sandbox's, which need `NET_ADMIN` and `SYS_ADMIN` over the container's own namespaces; rootless, these give nothing beyond the operator's user on the host. The supervisor stops a container by name (`podman stop`). One-time operator setup: `tools/git/install.sh` (hooks, per-agent SSH keys in `authorized_keys`), `deploy/agent/build.sh`, `claude setup-token` saved to `~/.config/hive/claude-oauth-token`.
 
-Known gaps:
-- Agents still run as the operator's OS user, inside containers or not, until a dedicated user exists. Key custody (SPEC §6.6) therefore rests on what each container mounts.
-- A container reaches every host loopback port, including the record's Postgres, which still needs its password.
-- Codex agents share the operator's Codex login directory.
+**Agent users** (`deploy/agent-users.sh`, since 2026-10-06). Each actor has its own OS user (`hive-worker-claude-1`, …), and its containers run in that user's rootless Podman (`sudo -u <user> /usr/local/bin/hive-agent-podman`). An agent that escapes its container is that unprivileged user: it can't read the operator's files, other agents' keys or other tasks' folders. In detail:
+- **Keys and settings** reach the container as that user's Podman secrets, per attempt: the record key, the git key, `known_hosts`, the review allow-list, and the Claude token.
+- **Task folders:** the launcher grants the user only that task's folder (ACLs, which keep the operator's access too).
+- **Codex:** each Codex actor needs its own login, once. As the operator, run `sudo -u hive-reviewer-codex-1 /usr/local/bin/hive-agent-podman run --rm -it -v /var/lib/1hive-agents/hive-reviewer-codex-1/.codex:/root/.codex localhost/1hive-agent:latest codex login --device-auth`.
+- **The image** is copied into each user's storage when it changes.
+
+Without an agent user, the launcher falls back to the operator's Podman and the operator's Codex login.
+
+Known gap: a container reaches every host loopback port, including the record's Postgres, which still needs its password.
 
 **Route facts.** Every work order states its task's facts on a line of its own, which `tools/launch-task.sh` passes to the router: `Route facts: specification=explicit verification=independent scope=few consequence=reversible leverage=0`. Any fact may be `unknown` (it then takes the costly default). A new task whose order has no such line is refused at launch (`ROUTE_FACTS=none` launches it without facts on purpose), because without facts every task runs on the strong tier. Restarts and reviews reuse the facts; a worker's checkpoint may change `specification` and `scope` (worker contract). What each fact means: hive-route ADOPTING.md §4, "Facts".
 
