@@ -77,6 +77,19 @@
         "model_route": "none",
         "sandbox": "none (operator user)"
       }
+    },
+    {
+      "actor_id": "dispatcher",
+      "class": "coordinator",
+      "role": "review-dispatcher",
+      "keys": [
+        "ed25519:q23S7Na6z_ywcF5FFbOPMIZpkKeay_oIZr3Dp1uaMWk"
+      ],
+      "declaration": {
+        "harness": "none (deterministic: tools/dispatcher.py)",
+        "model_route": "none",
+        "sandbox": "operator user (systemd user service)"
+      }
     }
   ]
 }

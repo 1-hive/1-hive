@@ -84,6 +84,28 @@ systemctl --user daemon-reload
 systemctl --user enable -q 1-hive-supervisor.service
 systemctl --user restart 1-hive-supervisor.service
 
+if hive actors 2>/dev/null | grep -q '"dispatcher"'; then
+  log "review dispatcher user service"
+  cat > "$HOME/.config/systemd/user/1-hive-dispatcher.service" <<UNIT
+[Unit]
+Description=1-hive review dispatcher (assigns and launches a reviewer for every new result; signs as actor dispatcher)
+After=1-hive-gateway.service 1-hive-agent-ports.service
+
+[Service]
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/dispatcher.py --interval 60
+# Reviewers it launches are its children: restarting it must not kill them.
+KillMode=process
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+UNIT
+  systemctl --user daemon-reload
+  systemctl --user enable -q 1-hive-dispatcher.service
+  systemctl --user restart 1-hive-dispatcher.service
+fi
+
 log "agent ports user service"
 cat > "$HOME/.config/systemd/user/1-hive-agent-ports.service" <<UNIT
 [Unit]
