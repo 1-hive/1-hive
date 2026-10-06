@@ -267,7 +267,7 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 - **1-hive loop (Phase E):**
   - `mtg-player` goals run end to end with the human doing only goal approval and acceptance;
   - at least one crash and one lost agent are recovered by the supervisor without human involvement, as shown by the record (shown 2026-10-06: crash, col-1-eval positions 170–176; lost agent, goal `supervisor-drill`, positions 443–449, reviewed at 453);
-  - the human receives only the interrupts listed in D15, plus the digest.
+  - the human receives only the interrupts listed in D15, plus the digest (audit 2026-10-06: every push so far was a goal to approve or accept, plus 2 reminders; the digest, budget-overrun and repeated-failure interrupts were added that day and are not yet shown on the record).
 
 ---
 

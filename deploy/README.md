@@ -16,7 +16,9 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `apply-registry.sh [reason]` | Move the running hive to `registry.json` (e.g. a newly registered repository) with a recorded `hive.registry_changed`, and restart the gateway to load it. Run by the operator |
 | `reset.sh --yes-destroy-the-log` | Start fresh: archive the log to `~/.local/share/1-hive/archive/`, destroy the database, run `up.sh`. Git repositories are untouched |
 
-The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`. The supervisor (`tools/supervisor.py`) runs as `1-hive-supervisor.service`: it nudges silent workers, restarts dead or stalled ones with context generated from the record, and escalates to the chief of staff. Everything it does is recorded under the actor `supervisor`. Logs: `journalctl --user -u 1-hive-supervisor`.
+The gateway runs as the user service `1-hive-gateway.service` on `http://127.0.0.1:8470`. The supervisor (`tools/supervisor.py`) runs as `1-hive-supervisor.service`: it nudges silent workers, restarts dead or stalled ones with context generated from the record, and escalates to the chief of staff. Two kinds of escalation go to the operator instead, as interrupts (PLAN D15): a task that fails repeatedly (`repeated_failure`), and an active goal past its budget (`goal.escalated`, `budget_exceeded`; wall clock counts from approval). Everything it does is recorded under the actor `supervisor`. Logs: `journalctl --user -u 1-hive-supervisor`.
+
+The Telegram bridge (`tools/telegram-bridge.py`) runs as `1-hive-telegram.service`. It pushes the operator's inbox: goals to approve or accept, and escalations to the operator. It also sends a **daily digest at 08:00 local time** (`--digest-at`), and `/digest` sends one on request. Each digest names the time of the next one, so a digest that doesn't arrive is the alarm. Nothing else is pushed. Logs: `journalctl --user -u 1-hive-telegram`.
 
 Known gap: agents run as the operator's OS user until a dedicated user exists, so key custody (SPEC §6.6) rests on separate key files only.
 
