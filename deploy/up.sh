@@ -84,6 +84,24 @@ systemctl --user daemon-reload
 systemctl --user enable -q 1-hive-supervisor.service
 systemctl --user restart 1-hive-supervisor.service
 
+log "agent ports user service"
+cat > "$HOME/.config/systemd/user/1-hive-agent-ports.service" <<UNIT
+[Unit]
+Description=1-hive agent ports (the only host services agent containers reach: record, model gateway, sshd)
+After=1-hive-gateway.service
+
+[Service]
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/agent-ports.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable -q 1-hive-agent-ports.service
+systemctl --user restart 1-hive-agent-ports.service
+
 if [ -s "$HIVE_CONFIG_DIR/telegram-token" ] && [ -s "$HIVE_CONFIG_DIR/telegram.json" ] && [ -f "$HIVE_CONFIG_DIR/telegram-bridge.key" ]; then
   log "telegram bridge user service"
   cat > "$HOME/.config/systemd/user/1-hive-telegram.service" <<UNIT
