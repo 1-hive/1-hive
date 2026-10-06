@@ -138,6 +138,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
   4. N failed attempts → reassign to a different agent or model;
   5. still failing, or over budget → escalate to the chief of staff, and to the human if the goal is at risk or the task **fails repeatedly**.
 - **Routing checkpoints** (2026-10-06): a worker may end its attempt asking to be routed again, down after a plan or up when the task needs more; the supervisor restarts it with the updated facts or hint (hive-route ROUTING §4.5, worker contract). Not a failed attempt.
+- **Route facts** (2026-10-06): every work order carries a `Route facts:` line (any fact may be `unknown`); the launcher refuses a new task without one (deploy/README.md).
 - **Default thresholds**, overridable per goal: check in every 15 min; 2 nudges before a restart; 3 attempts per actor; 2 reassignments before escalating.
 - **Judgment goes to a triage agent, invoked only at triggers:** alive but not progressing; repeated failures; a failed-review loop; a state the ladder doesn't cover. It is a fresh LLM session per incident (a supervisor-class actor with its own credential). It reads the task's record plus the agent's transcript and picks one action from a **fixed menu**:
   - nudge with a specific message;
