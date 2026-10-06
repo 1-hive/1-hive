@@ -14,6 +14,7 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `route-table.yaml`, `route-sources.yaml` | The router's table (routes, pools, tiers) and its sources (usage readers, harness commands, the qualifications file) |
 | `review-allowlist.json` | Claude Code permissions for the `claude-code-allowlist` harness (`--permission-mode dontAsk`): what a reviewer on a self-hosted route may do, with no model judging its actions. Not a sandbox: `python3` and `podman` reach what the OS user can |
 | `apply-registry.sh [reason]` | Move the running hive to `registry.json` (e.g. a newly registered repository) with a recorded `hive.registry_changed`, and restart the gateway to load it. Run by the operator |
+| `agent-users.sh` | Run once with sudo: one OS user per agent actor (`hive-worker-claude-1`, …), each with its own sub-ids and lingering, plus the sudoers rule that lets the launcher start their containers (`/usr/local/bin/hive-agent-podman`) |
 | `runtime` | Where agents run by default: `host` or `container` (`tools/launch-task.sh`, `ROUTE_RUNTIME` overrides) |
 | `agent/` | The agent image `localhost/1hive-agent` (`agent/build.sh`): Ubuntu 24.04 with the host's current `claude`, `codex` and `uv`, `hive`/`hive-pin` at hive-record's tag, and nested Podman. Rebuild after upgrading a harness |
 | `reset.sh --yes-destroy-the-log` | Start fresh: archive the log to `~/.local/share/1-hive/archive/`, destroy the database, run `up.sh`. Git repositories are untouched |
