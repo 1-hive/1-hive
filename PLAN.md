@@ -266,7 +266,7 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 - **R2:** 1-hive is authoritative; the failure suite passes in CI and on a scratch run of the deployment; `done` is unreachable without an independent pass of the current result.
 - **1-hive loop (Phase E):**
   - `mtg-player` goals run end to end with the human doing only goal approval and acceptance;
-  - at least one crash and one lost agent are recovered by the supervisor without human involvement, as shown by the record;
+  - at least one crash and one lost agent are recovered by the supervisor without human involvement, as shown by the record (shown 2026-10-06: crash, col-1-eval positions 170–176; lost agent, goal `supervisor-drill`, positions 443–449, reviewed at 453);
   - the human receives only the interrupts listed in D15, plus the digest.
 
 ---
