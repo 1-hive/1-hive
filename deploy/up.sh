@@ -84,7 +84,7 @@ systemctl --user daemon-reload
 systemctl --user enable -q 1-hive-supervisor.service
 systemctl --user restart 1-hive-supervisor.service
 
-if hive actors 2>/dev/null | grep -q '"dispatcher"'; then
+if HIVE_KEY_FILE="$HIVE_CONFIG_DIR/operator.key" hive actors 2>/dev/null | grep -q '"dispatcher"'; then
   log "review dispatcher user service"
   cat > "$HOME/.config/systemd/user/1-hive-dispatcher.service" <<UNIT
 [Unit]
