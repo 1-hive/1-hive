@@ -46,6 +46,12 @@ Without an agent user, the launcher falls back to the operator's Podman and the 
 
 **Route facts.** Every work order states its task's facts on a line of its own, which `tools/launch-task.sh` passes to the router: `Route facts: specification=explicit verification=independent scope=few consequence=reversible leverage=0`. Any fact may be `unknown` (it then takes the costly default). A new task whose order has no such line is refused at launch (`ROUTE_FACTS=none` launches it without facts on purpose), because without facts every task runs on the strong tier. Restarts and reviews reuse the facts; a worker's checkpoint may change `specification` and `scope` (worker contract). What each fact means: hive-route ADOPTING.md §4, "Facts".
 
+**Scorers** (table version 15). For a task with unknown facts, the router's scorers estimate them from the order's text and log their estimates (shadow mode: never used). Two scorers run, both as user services on loopback:
+- `qwen-local`: Qwen 8B on `ollama.service`, port 11434.
+- `kev-4b`: Kev-4B 1.0, a self-hosted decision model with the System One API, on `kev.service`, port 8009. It's installed in `~/opt/kev`. CUDA graphs and the prefix cache are off so it stays under about 10 GB of GPU memory, next to Ollama. Any local process may call it.
+
+Compare them with `hive-route scorer-eval deploy/route-table.yaml <hive-route>/fixtures/scorer/suite.jsonl --workspace ~/repos/hive-workspace.git --commit <the suite's commit>`.
+
 **Review tiers.** A review runs at least at the author's tier (router rule F7). For a high-stakes task, the order can ask for more with a line `Review tier: strong`; `tools/launch-task.sh` passes it to the router as a hint, which can only raise the tier. The review-only route `sc-deepseek-v4` (standard) then can't take it.
 
 **Canaries.** `canaries/reviews/` is 1-hive's own review suite (cases from past reviews with known verdicts); run it with `hive-route canary run deploy/route-table.yaml <route> --suite canaries/reviews --sources deploy/route-sources.yaml --log ~/work/1hive/route-log.jsonl`.
