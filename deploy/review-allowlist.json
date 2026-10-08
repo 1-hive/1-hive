@@ -54,7 +54,17 @@
       "Bash(rm -rf:*)",
       "Bash(sudo:*)",
       "Bash(podman rm -a:*)",
-      "Bash(podman system:*)"
+      "Bash(podman system:*)",
+      "Read(**/*.png)",
+      "Read(**/*.jpg)",
+      "Read(**/*.jpeg)",
+      "Read(**/*.gif)",
+      "Read(**/*.webp)",
+      "Read(//**/*.png)",
+      "Read(//**/*.jpg)",
+      "Read(//**/*.jpeg)",
+      "Read(//**/*.gif)",
+      "Read(//**/*.webp)"
     ]
   }
 }
