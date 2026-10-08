@@ -24,6 +24,7 @@
 #   when Codex is out. It runs with no model judging its actions (harness claude-code-allowlist: dontAsk and
 #   a fixed allow list, deploy/review-allowlist.json), so its own model never approves its own actions.
 # Version 15: Kev-4B (a self-hosted Jev-like decision model, kev.service) as a shadow scorer next to Qwen.
+# Version 16: Kev-4B becomes the reader (§4.8, shadow) instead of a shadow scorer.
 # Version 16: opus-max (Opus 5.5 at max effort), in no tier: only an operator override picks it
 #   (~/.config/hive/route-overrides.json, tools/launch-task.sh).
 format: hive-route.table/1
@@ -61,9 +62,8 @@ tiers:
   local:    [qwen-local]
 # The scorer (§4.3) estimates unknown task facts on the local model; shadow: logged, not used.
 scorer: {route: qwen-local, mode: shadow, max_output_tokens: 800, timeout_s: 90}
-# Shadow scorers: always logged, never used; compared with the scorer on real tasks.
-shadow_scorers:
-  - {route: kev-4b, timeout_s: 10}
+# The reader (§4.8): Kev-4B reads every attempt's facts; shadow: logged, never used.
+reader: {route: kev-4b, mode: shadow, timeout_s: 10}
 # fixed mode: the launcher's models before routing, the baseline (§6).
 fixed:
   work: opus-plan
