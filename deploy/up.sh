@@ -124,6 +124,27 @@ systemctl --user daemon-reload
 systemctl --user enable -q 1-hive-agent-ports.service
 systemctl --user restart 1-hive-agent-ports.service
 
+if [ -f "$HIVE_CONFIG_DIR/floor.key" ]; then
+  log "floor user service (read-only live board on 127.0.0.1:8476)"
+  cat > "$HOME/.config/systemd/user/1-hive-floor.service" <<UNIT
+[Unit]
+Description=1-hive Floor (read-only live board; reads as actor floor, which never emits)
+After=$UNIT
+
+[Service]
+ExecStart=$(uv tool dir)/hiverecord/bin/python $DEPLOY_DIR/../tools/floor.py --port 8476
+Environment=HIVE_URL=$HIVE_URL HIVE_ID=$HIVE_ID FLOOR_KEY_FILE=$HIVE_CONFIG_DIR/floor.key
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+UNIT
+  systemctl --user daemon-reload
+  systemctl --user enable -q 1-hive-floor.service
+  systemctl --user restart 1-hive-floor.service
+fi
+
 if [ -s "$HIVE_CONFIG_DIR/telegram-token" ] && [ -s "$HIVE_CONFIG_DIR/telegram.json" ] && [ -f "$HIVE_CONFIG_DIR/telegram-bridge.key" ]; then
   log "telegram bridge user service"
   cat > "$HOME/.config/systemd/user/1-hive-telegram.service" <<UNIT

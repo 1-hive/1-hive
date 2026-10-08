@@ -90,6 +90,19 @@
         "model_route": "none",
         "sandbox": "operator user (systemd user service)"
       }
+    },
+    {
+      "actor_id": "floor",
+      "class": "instrument",
+      "role": "floor",
+      "keys": [
+        "ed25519:af5Kgs5mqc-i6caPdqIwndnZq3PIMoJn5Q3Q1J1mz18"
+      ],
+      "declaration": {
+        "harness": "floor (tools/floor.py)",
+        "model_route": "none (deterministic, read-only: never emits)",
+        "sandbox": "none (operator user)"
+      }
     }
   ]
 }
