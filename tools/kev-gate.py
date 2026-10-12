@@ -3,7 +3,7 @@
 """kev-gate: lets another hive use this host's Kev (kev.service, loopback only) as its
 reader (hive-route ROUTING §4.8), through one narrow, authenticated door.
 
-- Listens on KEV_GATE_BIND (default 100.84.153.84:8010, this host's Tailscale address).
+- Listens on KEV_GATE_BIND (default 127.0.0.1:8010; Tailscale Funnel publishes it).
 - Serves only POST /v1/systemone, with "Authorization: Bearer <key>". The key's SHA-256 is
   in KEV_GATE_KEY_SHA256_FILE (default ~/.config/hive/kev-gate.sha256); the key itself is
   never stored here.
@@ -92,7 +92,7 @@ class Gate(BaseHTTPRequestHandler):
 
 
 def main() -> int:
-    host, _, port = os.environ.get("KEV_GATE_BIND", "100.84.153.84:8010").rpartition(":")
+    host, _, port = os.environ.get("KEV_GATE_BIND", "127.0.0.1:8010").rpartition(":")
     if not KEY_FILE.is_file():
         print(f"no key hash at {KEY_FILE}", file=sys.stderr)
         return 2

@@ -56,12 +56,13 @@ Without an agent user, the launcher falls back to the operator's Podman and the 
   - Kev is installed in `~/opt/kev`. CUDA graphs and the prefix cache are off so it stays under about 10 GB of GPU memory, next to Ollama. Any local process may call it.
   - It is qualified: run `hive-route reader-qualify deploy/route-table.yaml <hive-route>/fixtures/scorer/portable.jsonl --sources deploy/route-sources.yaml --log ~/work/1hive/route-log.jsonl` again after any change to the reader. Going `live` is a table change for the operator.
 
-**Kev for vm2: `kev-gate`.** Ben's vm2 has no GPU, so it uses this host's Kev as its reader, through `tools/kev-gate.py` (user service `kev-gate.service`, `100.84.153.84:8010`).
-- **What it serves:** only `POST /v1/systemone` with a bearer key, forwarded to Kev on loopback. Kev's own server stays on loopback.
+**Kev for vm2: `kev-gate`.** Ben's vm2 has no GPU, so it uses this host's Kev as its reader, through `tools/kev-gate.py` (user service `kev-gate.service`, on `127.0.0.1:8010`).
+- **What it serves:** only `POST /v1/systemone` with a bearer key, forwarded to Kev on loopback.
+- **Public URL:** Tailscale Funnel publishes the gate, and nothing else, at `https://omegahive-host.tail5833f.ts.net`: `tailscale funnel --bg 8010`, kept across restarts. vm2 needs no Tailscale. sshd and the other loopback services aren't exposed.
 - **Key:** `~/.config/hive/kev-gate.key`, mode 600, which the operator hands to vm2. The gate keeps only its hash, in `kev-gate.sha256`.
-- **Logs:** one line per request: time, client, status, sizes and seconds. Never the text.
-- **Reaching it:** vm2 gets there over Tailscale through a **node share** of this host only. A share keeps your other devices invisible, but exposes every port of this host to vm2. `sudo deploy/kev-gate-firewall.sh <vm2 IPv4> [<vm2 IPv6>]` limits vm2 to port 8010 on `tailscale0`, persistently.
+- **Logs:** one line per request: time, status, sizes and seconds. Never the text.
 - **Rotating the key:** write a new key and its hash, then restart the gate.
+- **Stopping access:** `tailscale funnel --bg 8010 off`, or stop the gate.
 
 Compare scorers with `hive-route scorer-eval deploy/route-table.yaml <hive-route>/fixtures/scorer/portable.jsonl --scorer <route>`.
 
