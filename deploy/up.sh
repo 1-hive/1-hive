@@ -165,3 +165,27 @@ UNIT
   systemctl --user enable -q 1-hive-telegram.service
   systemctl --user restart 1-hive-telegram.service
 fi
+
+log "daily backup timer"
+cat > "$HOME/.config/systemd/user/1-hive-backup.service" <<UNIT
+[Unit]
+Description=1-hive backup (record export, git remotes, keys; deploy/backup.sh)
+After=$UNIT
+
+[Service]
+Type=oneshot
+ExecStart=$DEPLOY_DIR/backup.sh
+UNIT
+cat > "$HOME/.config/systemd/user/1-hive-backup.timer" <<UNIT
+[Unit]
+Description=Daily 1-hive backup
+
+[Timer]
+OnCalendar=*-*-* 03:30
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable -q --now 1-hive-backup.timer
