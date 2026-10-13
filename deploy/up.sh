@@ -189,3 +189,27 @@ WantedBy=timers.target
 UNIT
 systemctl --user daemon-reload
 systemctl --user enable -q --now 1-hive-backup.timer
+
+log "daily task-folder sweep timer"
+cat > "$HOME/.config/systemd/user/1-hive-sweeper.service" <<UNIT
+[Unit]
+Description=1-hive sweeper (removes task folders the record says are no longer needed; tools/sweeper.py)
+After=$UNIT
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/sweeper.py
+UNIT
+cat > "$HOME/.config/systemd/user/1-hive-sweeper.timer" <<UNIT
+[Unit]
+Description=Daily 1-hive task-folder sweep
+
+[Timer]
+OnCalendar=*-*-* 04:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable -q --now 1-hive-sweeper.timer
