@@ -197,6 +197,29 @@ UNIT
 systemctl --user daemon-reload
 systemctl --user enable -q --now 1-hive-backup.timer
 
+log "watchdog timer (Telegram when something is down)"
+cat > "$HOME/.config/systemd/user/1-hive-watchdog.service" <<UNIT
+[Unit]
+Description=1-hive watchdog (tells the operator on Telegram when something is down; tools/watchdog.py)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/watchdog.py
+UNIT
+cat > "$HOME/.config/systemd/user/1-hive-watchdog.timer" <<UNIT
+[Unit]
+Description=1-hive watchdog, every 2 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=2min
+
+[Install]
+WantedBy=timers.target
+UNIT
+systemctl --user daemon-reload
+systemctl --user enable -q --now 1-hive-watchdog.timer
+
 log "daily task-folder sweep timer"
 cat > "$HOME/.config/systemd/user/1-hive-sweeper.service" <<UNIT
 [Unit]
