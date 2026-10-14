@@ -43,17 +43,21 @@ if [ -z "$(hive export --db-url "$(role_url reader)" 2>/dev/null | head -c1)" ];
 fi
 
 log "gateway user service"
+# after a reboot, podman brings back the unless-stopped databases only through this unit
+systemctl --user enable -q podman-restart.service
 mkdir -p "$HOME/.config/systemd/user"
 cat > "$HOME/.config/systemd/user/$UNIT" <<UNIT
 [Unit]
 Description=1-hive record gateway (hive-record $HIVE_RECORD_REF)
-After=network.target
+After=network.target podman-restart.service
+StartLimitIntervalSec=0
 
 [Service]
 Environment=PGPASSFILE=$PGPASS
 Environment=HIVEPIN_REPOSITORY_REGISTRY_PATH=$REGISTRY
 ExecStart=$HOME/.local/bin/hive gateway --db-url $(role_url gateway) --registry $REGISTRY --host 127.0.0.1 --port $HIVE_GATEWAY_PORT --source-commit $SOURCE_COMMIT
 Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=default.target
