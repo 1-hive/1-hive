@@ -34,13 +34,23 @@
   },
   "mtg-colosseo": {
    "fetch_urls": [
-    "file:///home/omegahive/repos/mtg-colosseo.git"
+    "file:///home/omegahive/repos/mtg-colosseum.git"
    ],
    "object_format": "sha1",
    "allowed_ref_patterns": [
     "refs/heads/*"
    ],
-   "local_path": "~/repos/mtg-colosseo.git"
+   "local_path": "~/repos/mtg-colosseum.git"
+  },
+  "mtg-colosseum": {
+   "fetch_urls": [
+    "file:///home/omegahive/repos/mtg-colosseum.git"
+   ],
+   "object_format": "sha1",
+   "allowed_ref_patterns": [
+    "refs/heads/*"
+   ],
+   "local_path": "~/repos/mtg-colosseum.git"
   }
  }
 }
