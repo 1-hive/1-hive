@@ -6,7 +6,10 @@ mkdir -p "$HIVE_CONFIG_DIR" && chmod 700 "$HIVE_CONFIG_DIR"
 log "hive-record ${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF} (the hive and hive-pin commands)"
 uv tool install -q --force --with-executables-from hivepin \
   "git+https://github.com/1-hive/hive-record@${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}"
-SOURCE_COMMIT=$(git ls-remote https://github.com/1-hive/hive-record "refs/tags/${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}^{}" | cut -f1)
+# An annotated tag lists its commit as <tag>^{}; a lightweight tag points at the commit itself.
+TOOL_TAG=refs/tags/${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}
+SOURCE_COMMIT=$(git ls-remote https://github.com/1-hive/hive-record "$TOOL_TAG^{}" "$TOOL_TAG" | sort -k2 -r | head -1 | cut -f1)
+[ -n "$SOURCE_COMMIT" ] || { echo "no commit for $TOOL_TAG" >&2; exit 1; }
 
 if [ ! -f "$PG_ENV" ]; then
   log "new Postgres superuser password"
