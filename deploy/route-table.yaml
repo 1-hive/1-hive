@@ -27,8 +27,10 @@
 # Version 16: Kev-4B becomes the reader (§4.8, shadow) instead of a shadow scorer.
 # Version 16: opus-max (Opus 5.5 at max effort), in no tier: only an operator override picks it
 #   (~/.config/hive/route-overrides.json, tools/launch-task.sh).
+# Version 17: subagents (hive-route §4.9): Opus attempts may hand well-specified subtasks to
+#   sonnet-plan (same plan); api-opus to api-sonnet.
 format: hive-route.table/1
-version: 16
+version: 17
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
@@ -68,3 +70,8 @@ reader: {route: kev-4b, mode: shadow, timeout_s: 10}
 fixed:
   work: opus-plan
   review: gpt-sol-plan
+subagents:
+  opus-plan: [sonnet-plan]
+  opus-std: [sonnet-plan]
+  opus-max: [sonnet-plan]
+  api-opus: [api-sonnet]
