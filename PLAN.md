@@ -160,6 +160,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
   - **Interrupts:** a goal to approve; a completed goal to accept; a budget overrun; a task failing repeatedly; an escalation the chief of staff can't resolve.
   - **Digest:** periodic progress per goal.
   - Everything else is silent but can be asked about. A missing digest at its scheduled time is itself an alarm.
+- **How the chief of staff is woken** (2026-10-14): it runs per message (seat-and-wake, roadmap M3), not as one standing session, so fixed rules wake it: the bridge messages it for each goal approved, escalation to it, blocked task and passed review (blocked tasks added after a worker's question waited 16 hours, `cust-1-coordinator`, position 861). A follow-up the human asks for ("check in 10 minutes") wakes it at that time; the bridge accepts one only if written within 16 minutes of the human's message, at most 2 hours ahead and 3 pending, so the chief of staff can't start pushes on its own. Replies that say nothing aren't forwarded (no-op suppression). Its requests for hive changes (`hive-requests/` in the workspace) are listed in the digest, not pushed. Budget overruns get a one-tap **+4h** (`op budget`), which stays operator-only (D12). It still may not change the hive's code or launch agents: that would be authority without a trial (rule 3; §9).
   - Added at the operator's request (2026-10-08): a one-line note when a task is done (closed or cancelled), so goals aren't silent between approval and acceptance. Host alerts (`tools/watchdog.py`, since 2026-10-14) are about the machine, not the record, and go to the same chat.
 
 **D16. Core + profiles, and one repo per adoptable piece.**
@@ -287,6 +288,8 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 | Delegating goal approval or acceptance | Approval evidence argues for it (M4) |
 | Model-diversity requirement for reviewers | R5, or a same-model review that let something slip |
 | Triage authority beyond its fixed menu; the governor's goal-relevance verdicts | An M3 trial wins it |
+| Chief-of-staff authority over the hive itself (changing its code, launching agents) | An M3 trial wins it |
+| Chat with the chief of staff as record events (R7's logging half; `message.*` is reserved) | Replaying or auditing the chief of staff's decisions needs it |
 
 ---
 
