@@ -160,6 +160,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
   - **Interrupts:** a goal to approve; a completed goal to accept; a budget overrun; a task failing repeatedly; an escalation the chief of staff can't resolve.
   - **Digest:** periodic progress per goal.
   - Everything else is silent but can be asked about. A missing digest at its scheduled time is itself an alarm.
+  - Added at the operator's request (2026-10-08): a one-line note when a task is done (closed or cancelled), so goals aren't silent between approval and acceptance. Host alerts (`tools/watchdog.py`, since 2026-10-14) are about the machine, not the record, and go to the same chat.
 
 **D16. Core + profiles, and one repo per adoptable piece.**
 - The goal: other hives can adopt each piece on its own, as with R0.
@@ -267,7 +268,9 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 - **1-hive loop (Phase E):**
   - `mtg-player` goals run end to end with the human doing only goal approval and acceptance;
   - at least one crash and one lost agent are recovered by the supervisor without human involvement, as shown by the record (shown 2026-10-06: crash, col-1-eval positions 170–176; lost agent, goal `supervisor-drill`, positions 443–449, reviewed at 453);
-  - the human receives only the interrupts listed in D15, plus the digest (audit 2026-10-06: every push so far was a goal to approve or accept, plus 2 reminders; the digest, budget-overrun and repeated-failure interrupts were added that day and are not yet shown on the record).
+  - the human receives only the interrupts listed in D15, plus the digest (shown 2026-10-14, from the bridge's log since 2026-10-01: 17 goals to approve, 14 to accept, 7 escalations to the operator, all from the supervisor (4 budget overruns at positions 495, 566, 593, 862; 2 repeated failures at 594, 601; 1 reviewer out of quota at 650), 5 reminders, a digest every day at 08:00 since 2026-10-07 with none missed, and the task-done notes the operator asked for).
+
+**Phase E's exit criteria are all met (2026-10-14).**
 
 ---
 
