@@ -8,7 +8,7 @@ Everything needed to rebuild 1-hive's record. Secrets and private keys live in `
 | `registry.json` | hivepin repository registry: hive-record (policy), the workspace, mtg-player |
 | `compose.yml` | The record's Postgres (container `1hive-pg`, loopback port 5433) |
 | `actors.json` | The agent actors, with **public** keys only |
-| `up.sh` | Bring 1-hive up; every step is skipped when already done. Enables `podman-restart` so the databases return after a reboot; the gateway retries every 5 s until its database is up |
+| `up.sh` | Bring 1-hive up; every step is skipped when already done. Enables `podman-restart` so the databases return after a reboot; the gateway retries every 5 s until its database is up; `~/.config/environment.d` puts `~/.local/bin` on user services' PATH |
 | `register-actors.sh` | Register new actors from `actors.json`. Run by the operator; signs with `~/.config/hive/operator.key` |
 | `apply-policy.sh [reason]` | Move the running hive to the policy at `HIVE_RECORD_REF` with a recorded `hive.policy_changed`. Run by the operator |
 | `route-table.yaml`, `route-sources.yaml` | The router's table (routes, pools, tiers) and its sources (usage readers, harness commands, the qualifications file) |

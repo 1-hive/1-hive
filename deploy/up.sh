@@ -43,6 +43,9 @@ if [ -z "$(hive export --db-url "$(role_url reader)" 2>/dev/null | head -c1)" ];
 fi
 
 log "gateway user service"
+# user services started at boot get systemd's default PATH, without ~/.local/bin (uv, hive, claude)
+mkdir -p "$HOME/.config/environment.d"
+printf 'PATH=%s/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n' "$HOME" > "$HOME/.config/environment.d/10-1hive-path.conf"
 # after a reboot, podman brings back the unless-stopped databases only through this unit
 systemctl --user enable -q podman-restart.service
 mkdir -p "$HOME/.config/systemd/user"
