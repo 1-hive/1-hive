@@ -29,8 +29,9 @@
 #   (~/.config/hive/route-overrides.json, tools/launch-task.sh).
 # Version 17: subagents (hive-route §4.9): Opus attempts may hand well-specified subtasks to
 #   sonnet-plan (same plan); api-opus to api-sonnet.
+# Version 18: kev-4b serves the fine-tuned reader (hive-route rev 16, runs/reader-ft-v1); weights in its pin.
 format: hive-route.table/1
-version: 17
+version: 18
 prefer: order        # SingularityCompute (self-hosted) first in each tier; the paid plans back it up
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
@@ -56,7 +57,7 @@ routes:
   api-opus:     {tier: strong,   pool: anthropic-api, family: claude, harness: claude-code, model: claude-opus-5-5, gateway_model: anthropic/claude-opus-5-5, effort: high, via_gateway: true, price: {in: 4, out: 20}, tools: true}
   api-sonnet:   {tier: standard, pool: anthropic-api, family: claude, harness: claude-code, model: claude-sonnet-5-5, gateway_model: anthropic/claude-sonnet-5-5, via_gateway: true, price: {in: 2, out: 10}, tools: true}
   qwen-local:   {tier: local,    pool: local-gpu,    family: qwen,   harness: ollama, endpoint: "http://127.0.0.1:11434", model: "qwen3:8b", tools: false}
-  kev-4b:       {tier: local,    pool: kev-gpu,      family: qwen,   harness: systemone, endpoint: "http://127.0.0.1:8009", model: kev-latest, tools: false}
+  kev-4b:       {tier: local,    pool: kev-gpu,      family: qwen,   harness: systemone, endpoint: "http://127.0.0.1:8009", model: kev-latest, weights: runs/reader-ft-v1, tools: false}
 tiers:
   strong:   [opus-plan, gpt-astra-high]
   standard: [opus-std, sonnet-plan, gpt-sol-plan, sc-deepseek-v4]

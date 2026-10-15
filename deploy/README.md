@@ -52,11 +52,12 @@ Without an agent user, the launcher falls back to the operator's Podman and the 
 
 **Route facts.** Every work order states its task's facts on a line of its own, which `tools/launch-task.sh` passes to the router: `Route facts: specification=explicit verification=independent scope=few consequence=reversible leverage=0`. Any fact may be `unknown` (it then takes the costly default). A new task whose order has no such line is refused at launch (`ROUTE_FACTS=none` launches it without facts on purpose), because without facts every task runs on the strong tier. Restarts and reviews reuse the facts; a worker's checkpoint may change `specification` and `scope` (worker contract). What each fact means: hive-route ADOPTING.md §4, "Facts".
 
-**Scorers and the reader** (table version 16). Two local models read each task's order text. Neither changes routing yet:
+**Scorers and the reader** (table version 18). Two local models read each task's order text. Neither changes routing yet:
 - `qwen-local` (Qwen 8B on `ollama.service`, port 11434) is the scorer, in shadow. When a fact is unknown, it estimates it.
-- `kev-4b` (Kev-4B 1.0 on `kev.service`, port 8009) is the reader (hive-route ROUTING §4.8), in shadow. It reads all four facts on every attempt and logs `route.read`, so `hive-route report` shows where cos's `Route facts:` look too cheap or too costly.
+- `kev-4b` (Kev-4B fine-tuned as the reader, run `~/opt/kev/runs/reader-ft-v1`, on `kev.service`, port 8009; hive-route rev 16) is the reader (hive-route ROUTING §4.8), in shadow. It reads all four facts on every attempt and logs `route.read`, so `hive-route report` shows where cos's `Route facts:` look too cheap or too costly.
   - The launcher marks cos as the writer of the facts (`ROUTE_WRITER` overrides it).
   - Kev is installed in `~/opt/kev`. CUDA graphs and the prefix cache are off so it stays under about 10 GB of GPU memory, next to Ollama. Any local process may call it.
+  - The route's `weights` name the run `kev.service` serves (`--run`). They're in its pin, so a new run means: a new run name, `kev.service` and `weights` changed together, then requalify. vm2 reads through the gate, so it must change its own `weights` the same way and requalify.
   - It is qualified: run `hive-route reader-qualify deploy/route-table.yaml <hive-route>/fixtures/scorer/portable.jsonl --sources deploy/route-sources.yaml --log ~/work/1hive/route-log.jsonl` again after any change to the reader. Going `live` is a table change for the operator.
 
 **Kev for vm2: `kev-gate`.** Ben's vm2 has no GPU, so it uses this host's Kev as its reader, through `tools/kev-gate.py` (user service `kev-gate.service`, on `127.0.0.1:8010`).
