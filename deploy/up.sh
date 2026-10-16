@@ -46,10 +46,13 @@ if [ -z "$(hive export --db-url "$(role_url reader)" 2>/dev/null | head -c1)" ];
 fi
 
 log "gateway user service"
-# user services started at boot get systemd's default PATH, without ~/.local/bin (uv, hive, claude)
+# user services started at boot get systemd's default PATH, without ~/.local/bin (uv, hive, claude).
+# environment.d files apply in name order and Ubuntu's 99-environment.conf sets PATH outright,
+# so ours has to sort after it and prepend to whatever PATH it leaves.
 mkdir -p "$HOME/.config/environment.d"
-printf 'PATH=%s/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n' "$HOME" > "$HOME/.config/environment.d/10-1hive-path.conf"
-# after a reboot, podman brings back the unless-stopped databases only through this unit
+rm -f "$HOME/.config/environment.d/10-1hive-path.conf"
+printf 'PATH=%s/.local/bin:${PATH}\n' "$HOME" > "$HOME/.config/environment.d/999-1hive-path.conf"
+# after a reboot, podman (4.x) brings back only restart: always containers, through this unit
 systemctl --user enable -q podman-restart.service
 mkdir -p "$HOME/.config/systemd/user"
 cat > "$HOME/.config/systemd/user/$UNIT" <<UNIT
