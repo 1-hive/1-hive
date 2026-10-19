@@ -1,5 +1,5 @@
 # Where hive-route reads 1-hive's pool usage and route qualifications (ROUTING.md §7).
-# tools/launch-task.sh passes this to `hive-route decide --sources`.
+# hive-runtime's launch-task.sh passes this to `hive-route decide --sources`.
 format: hive-route.sources/1
 fresh_minutes: 30
 qualifications: ~/work/1hive/route-qualifications.json
@@ -18,7 +18,7 @@ pools:
 gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_WORKER_KEY, env_file: ~/.config/hive/gateway.env}   # model calls only
 
 # Canaries (ROUTING.md §3): `hive-route canary run` starts harnesses with these commands,
-# the same way tools/launch-task.sh does, in a scratch folder per case.
+# the same way hive-runtime's launch-task.sh does, in a scratch folder per case.
 canary_workdir: ~/work/1hive/canary
 harnesses:
   claude-code:

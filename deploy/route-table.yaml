@@ -1,6 +1,6 @@
 # 1-hive route table (hive-route, ROUTING.md). Workers on Claude Code (Claude Pro plan),
 # reviewers on Codex (ChatGPT plan). No API keys and no local model yet, so every pool is a
-# subscription and the gateway is not used (direct mode, §8). tools/launch-task.sh asks the
+# subscription and the gateway is not used (direct mode, §8). hive-runtime's launch-task.sh asks the
 # router for every attempt; the log starts in `fixed` mode, which reproduces the launcher
 # before routing: the baseline to measure against (§6).
 # Version 2: a route per tier in each family, so a review (a different family, RT4)
@@ -26,7 +26,7 @@
 # Version 15: Kev-4B (a self-hosted Jev-like decision model, kev.service) as a shadow scorer next to Qwen.
 # Version 16: Kev-4B becomes the reader (§4.8, shadow) instead of a shadow scorer.
 # Version 16: opus-max (Opus 5.5 at max effort), in no tier: only an operator override picks it
-#   (~/.config/hive/route-overrides.json, tools/launch-task.sh).
+#   (~/.config/hive/route-overrides.json, hive-runtime's launch-task.sh).
 # Version 17: subagents (hive-route §4.9): Opus attempts may hand well-specified subtasks to
 #   sonnet-plan (same plan); api-opus to api-sonnet.
 # Version 18: kev-4b serves the fine-tuned reader (hive-route rev 16, runs/reader-ft-v1); weights in its pin.

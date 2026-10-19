@@ -5,4 +5,4 @@ Planning and deployment for **1-hive**, a hive built on the One Hive shared comp
 - [`PLAN.md`](PLAN.md): the plan: One Hive R1 + R2, then 1-hive's operating loop (goals, chief of staff, supervisor).
 - `docs/`: notes. Private communications are git-ignored.
 
-Related repositories: [hive-pin](https://github.com/1-hive/hive-pin) (R0), [hive-record](https://github.com/1-hive/hive-record) (R1 + R2), [hive-route](https://github.com/1-hive/hive-route) (R8).
+Related repositories: [hive-pin](https://github.com/1-hive/hive-pin) (R0), [hive-record](https://github.com/1-hive/hive-record) (R1 + R2), [hive-route](https://github.com/1-hive/hive-route) (R8), [hive-runtime](https://github.com/1-hive/hive-runtime) (the operating loop, which 1-hive runs) and [hive-bridge](https://github.com/1-hive/hive-bridge) (Telegram and the Floor).

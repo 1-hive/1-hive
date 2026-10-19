@@ -7,7 +7,7 @@ Run every two minutes by the `1-hive-watchdog` timer (deploy/up.sh). Checks the 
 databases (Postgres containers), the gateway's health, and that every 1-hive service is active
 and no 1-hive timer job failed. A problem must show on two checks in a row before it is
 reported, so a restart in progress isn't an alert. Only changes are sent: what broke, and
-"all clear" once nothing is wrong. It messages Telegram's API directly (tools/telegram-say.py),
+"all clear" once nothing is wrong. It messages Telegram's API directly (hive-bridge's telegram-say.py),
 so it works while the Telegram bridge is down. Touches nothing on the record.
 """
 from __future__ import annotations
@@ -17,7 +17,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-TOOLS = Path(__file__).resolve().parent
+# The message goes out through hive-bridge's telegram-say.py, as installed by deploy/up.sh.
+SAY = Path.home() / ".local" / "share" / "1-hive" / "hive-bridge" / "telegram-say.py"
 STATE = Path.home() / ".local" / "share" / "1-hive" / "watchdog.json"
 CONTAINERS = ["1hive-pg", "hive-gw-pg"]
 SERVICES = [
@@ -77,7 +78,7 @@ def main() -> None:
         message = "1-hive watchdog: all clear, everything is running again."
         reported = []
     if message:
-        r = subprocess.run([sys.executable, str(TOOLS / "telegram-say.py"), message],
+        r = subprocess.run([sys.executable, str(SAY), message],
                            capture_output=True, text=True, timeout=60)
         if r.returncode != 0:  # retry on the next run
             reported = prev["reported"]

@@ -11,6 +11,12 @@ TOOL_TAG=refs/tags/${HIVE_RECORD_TOOL_REF:-$HIVE_RECORD_REF}
 SOURCE_COMMIT=$(git ls-remote https://github.com/1-hive/hive-record "$TOOL_TAG^{}" "$TOOL_TAG" | sort -k2 -r | head -1 | cut -f1)
 [ -n "$SOURCE_COMMIT" ] || { echo "no commit for $TOOL_TAG" >&2; exit 1; }
 
+log "hive-runtime $HIVE_RUNTIME_REF and hive-bridge $HIVE_BRIDGE_REF (the services run from $COMPONENTS)"
+mkdir -p "$COMPONENTS"
+install_component hive-runtime "$HIVE_RUNTIME_REF" "$RUNTIME"
+install_component hive-bridge "$HIVE_BRIDGE_REF" "$BRIDGE"
+ln -sfn "$RUNTIME/op" "$HOME/.local/bin/op"
+
 if [ ! -f "$PG_ENV" ]; then
   log "new Postgres superuser password"
   umask 077; printf 'POSTGRES_PASSWORD=%s\n' "$(openssl rand -hex 24)" > "$PG_ENV"
@@ -84,7 +90,7 @@ Description=1-hive supervisor (keeps tasks moving; signs as actor supervisor)
 After=$UNIT
 
 [Service]
-ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/supervisor.py --interval 60
+ExecStart=/usr/bin/python3 $RUNTIME/supervisor.py --interval 60
 # Workers the supervisor relaunches are its children: restarting the supervisor must not kill them.
 KillMode=process
 Restart=on-failure
@@ -105,7 +111,7 @@ Description=1-hive review dispatcher (assigns and launches a reviewer for every 
 After=1-hive-gateway.service 1-hive-agent-ports.service
 
 [Service]
-ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/dispatcher.py --interval 60
+ExecStart=/usr/bin/python3 $RUNTIME/dispatcher.py --interval 60
 # Reviewers it launches are its children: restarting it must not kill them.
 KillMode=process
 Restart=on-failure
@@ -126,7 +132,7 @@ Description=1-hive agent ports (the only host services agent containers reach: r
 After=1-hive-gateway.service
 
 [Service]
-ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/agent-ports.py
+ExecStart=/usr/bin/python3 $RUNTIME/agent-ports.py
 Restart=on-failure
 RestartSec=5
 
@@ -145,7 +151,7 @@ Description=1-hive Floor (read-only live board; reads as actor floor, which neve
 After=$UNIT
 
 [Service]
-ExecStart=$(uv tool dir)/hiverecord/bin/python $DEPLOY_DIR/../tools/floor.py --port 8476
+ExecStart=$(uv tool dir)/hiverecord/bin/python $BRIDGE/floor.py --port 8476
 Environment=HIVE_URL=$HIVE_URL HIVE_ID=$HIVE_ID FLOOR_KEY_FILE=$HIVE_CONFIG_DIR/floor.key
 Restart=on-failure
 RestartSec=30
@@ -160,13 +166,15 @@ fi
 
 if [ -s "$HIVE_CONFIG_DIR/telegram-token" ] && [ -s "$HIVE_CONFIG_DIR/telegram.json" ] && [ -f "$HIVE_CONFIG_DIR/telegram-bridge.key" ]; then
   log "telegram bridge user service"
+  # The chat with the chief of staff (TELEGRAM_CHAT_CMD) is hive-runtime's cos.sh.
+  [ -f "$HIVE_CONFIG_DIR/telegram-bridge.env" ] && sed -i -E "s#[^ =]*/cos\.sh#$RUNTIME/cos.sh#" "$HIVE_CONFIG_DIR/telegram-bridge.env"
   cat > "$HOME/.config/systemd/user/1-hive-telegram.service" <<UNIT
 [Unit]
 Description=1-hive Telegram bridge (operator inbox and buttons; signs with its own operator key)
 After=$UNIT
 
 [Service]
-ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/telegram-bridge.py
+ExecStart=/usr/bin/python3 $BRIDGE/telegram-bridge.py
 EnvironmentFile=-$HIVE_CONFIG_DIR/telegram-bridge.env
 Restart=on-failure
 RestartSec=30
@@ -178,6 +186,30 @@ UNIT
   systemctl --user enable -q 1-hive-telegram.service
   systemctl --user restart 1-hive-telegram.service
 fi
+
+if id hive-cos >/dev/null 2>&1; then
+  log "chief of staff user service (its own container, OS user hive-cos)"
+  cat > "$HOME/.config/systemd/user/1-hive-cos.service" <<UNIT
+[Unit]
+Description=1-hive chief of staff (its own container, OS user hive-cos)
+After=1-hive-agent-ports.service
+
+[Service]
+ExecStart=$RUNTIME/cos.sh run
+ExecStop=$RUNTIME/cos.sh stop
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+UNIT
+  systemctl --user daemon-reload
+  systemctl --user enable -q 1-hive-cos.service
+  systemctl --user restart 1-hive-cos.service
+fi
+
+log "agents' git access (pre-receive hooks; SSH keys forced to hive-runtime's git/hive-git-shell)"
+"$RUNTIME/git/install.sh" >/dev/null
 
 log "daily backup timer"
 cat > "$HOME/.config/systemd/user/1-hive-backup.service" <<UNIT
@@ -229,12 +261,12 @@ systemctl --user enable -q --now 1-hive-watchdog.timer
 log "daily task-folder sweep timer"
 cat > "$HOME/.config/systemd/user/1-hive-sweeper.service" <<UNIT
 [Unit]
-Description=1-hive sweeper (removes task folders the record says are no longer needed; tools/sweeper.py)
+Description=1-hive sweeper (removes task folders the record says are no longer needed; hive-runtime sweeper.py)
 After=$UNIT
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python3 $DEPLOY_DIR/../tools/sweeper.py
+ExecStart=/usr/bin/python3 $RUNTIME/sweeper.py
 UNIT
 cat > "$HOME/.config/systemd/user/1-hive-sweeper.timer" <<UNIT
 [Unit]
