@@ -209,7 +209,10 @@ UNIT
 fi
 
 log "agents' git access (pre-receive hooks; SSH keys forced to hive-runtime's git/hive-git-shell)"
-"$RUNTIME/git/install.sh" >/dev/null
+# Only the agents that run in containers use git over SSH: the chief of staff, workers and reviewers.
+# Host-side actors (router, supervisor, dispatcher, floor) get none, and --prune removes any they had.
+GIT_ACTORS=$(jq -r '.actors[] | select(.class == "chief_of_staff" or .class == "worker" or .class == "reviewer") | .actor_id' "$DEPLOY_DIR/actors.json")
+"$RUNTIME/git/install.sh" --prune $GIT_ACTORS
 
 log "daily backup timer"
 cat > "$HOME/.config/systemd/user/1-hive-backup.service" <<UNIT
