@@ -151,6 +151,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
 - **Progress and cost signals:** trial [AgentsView](https://github.com/kenn-io/agentsview) (MIT, local-first; reads Claude Code, Codex and 60+ other harnesses' session files; REST API, MCP server, SSE). It provides last activity, idle time and token/dollar cost for the adapters, and transcripts for triage. It is never authoritative, since transcripts are agents' private context. OmegaClaw needs its own adapter.
 - **Restart context is generated from the record**, never written by hand: the order at its latest version, the goal, previous attempts, the last checkpoint, Q&A and review feedback. It is committed, and pinned on `task.restarted`.
 - Workers must checkpoint (a `task.reported` of kind `checkpoint`) at least once per check-in interval.
+- *As built for long-lived agents (2026-10-20 to 23, the proto-hive):* agents that are talked to, not launched (`HIVE_LONG_LIVED_ACTORS`), are never restarted: the ladder is nudge, nudge (delivered as messages), escalate to the chief of staff, who reassigns; a review a long-lived reviewer leaves too long is escalated too. After an escalation or its resolution the supervisor waits a full window before escalating again (a silent reviewer had re-escalated every pass, hive-runtime v0.4.14).
 
 **D15. The interaction model: one front agent, and two buses.**
 - The human talks only to the **chief of staff**, a long-running Claude Code session with an MCP server over the gateway. It may later be compared against an OmegaClaw version as an M3 trial.
@@ -168,6 +169,7 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
 - **Why:** the roadmap's rule 3 says mechanisms become shared defaults only after beating a baseline. Our goals, proposals, leases and supervision haven't been compared yet, so they're an extension, not the core.
 - **Rule:** an extension may add classes, events, rels, codes and conditions, and add extension-only effects and `data.ext` fields. It may never change a core rule's states or relation, grant existing core classes more, or drop conditions. The gateway refuses to load an extension that tries.
 - **Promotion:** extensions that prove themselves in 1-hive can be proposed for the next core version.
+- *As built (2026-10-21):* a second extension, the **`proto-hive` profile** (hive-record amendment A6, SPEC Part III): the `1-hive` profile without goals, for a hive of long-lived chat bots where nothing waits for a human's approval and the order itself carries the goal, criteria and relevance line. It is the first profile written for another hive's operating model, which is what the core/profile split was for.
 - **Repos:**
 
 | Repo | Contents | Adoptable alone |
@@ -275,13 +277,15 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 
 **Phase E's exit criteria are all met (2026-10-14).**
 
+**Adopted by a second hive (2026-10-22).** The release plan counts a release done only when a hive that isn't the development team's own runs it. Ben Goertzel's proto-hive (five long-lived chat bots on two machines) switched to R1 + R2 that day, authoritative from the start, on the `proto-hive` profile, with a chief of staff in a Telegram work group and a reviewer on a different model; its first task went from a human's message to a posted result in four minutes. What it took is written up for other hives in [hive-runtime `docs/long-lived-agents.md`](https://github.com/1-hive/hive-runtime/blob/main/docs/long-lived-agents.md): a sidecar per agent holding its key, delivery through each agent's own runtime (never through chat), `install-agent.py`, re-declaration of self-modifying agents. It does not conform to SPEC §6.6 (its agents share OS users and a container; keys are held apart), and says so in its declarations. Its adoption note waits for the proto-hive's owner to agree to publish it.
+
 ---
 
 ## 9. Deliberately deferred (rule 1), each with its trigger
 
 | Deferred | Trigger |
 |---|---|
-| Mirror adapter | Another hive wants to adopt by mirroring |
+| Mirror adapter | Another hive wants to adopt by mirroring (the proto-hive chose authoritative from the start, 2026-10-22) |
 | Hash chain or signatures | Records cross a trust boundary |
 | Refusal flood control | A documented flood |
 | Incremental fold | Emit latency measured as a problem |
@@ -291,7 +295,7 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 | Model-diversity requirement for reviewers | R5, or a same-model review that let something slip |
 | Triage authority beyond its fixed menu; the governor's goal-relevance verdicts | An M3 trial wins it |
 | Chief-of-staff authority over the hive itself (changing its code, launching agents) | An M3 trial wins it |
-| Chat with the chief of staff as record events (R7's logging half; `message.*` is reserved) | Replaying or auditing the chief of staff's decisions needs it |
+| Chat with the chief of staff as record events (R7's logging half; `message.*` is reserved) | Replaying or auditing the chief of staff's decisions needs it. Meanwhile hive-bridge keeps every message it sees in a dialogue log outside the record (v0.4.0) |
 
 ---
 
