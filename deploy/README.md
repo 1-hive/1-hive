@@ -67,6 +67,7 @@ Without an agent user, the launcher falls back to the operator's Podman and the 
 **Kev for vm2: `kev-gate`.** Ben's vm2 has no GPU, so it uses this host's Kev as its reader, through `tools/kev-gate.py` (user service `kev-gate.service`, on `127.0.0.1:8010`).
 - **What it serves:** only `POST /v1/systemone` with a bearer key, forwarded to Kev on loopback.
 - **Public URL:** Tailscale Funnel publishes the gate, and nothing else, at `https://omegahive-host.tail5833f.ts.net`: `tailscale funnel --bg 8010`, kept across restarts. vm2 needs no Tailscale. sshd and the other loopback services aren't exposed.
+- **Its addresses aren't ours and aren't stable.** The Funnel name resolves to Tailscale's relay servers (IPv4 and IPv6), not to this host, and Tailscale moves them without notice: on 2026-10-25 they went from 209.177.145.x to 103.84.155.x. A hive that allowlists its outbound traffic must allow the name, or look it up again on a timer, never pin the addresses once. vm2 pinned them at service start, and its readings failed for two days until a restart (hive-route ADOPTING §10).
 - **Key:** `~/.config/hive/kev-gate.key`, mode 600, which the operator hands to vm2. The gate keeps only its hash, in `kev-gate.sha256`.
 - **Logs:** one line per request: time, status, sizes and seconds. Never the text.
 - **Rotating the key:** write a new key and its hash, then restart the gate.
