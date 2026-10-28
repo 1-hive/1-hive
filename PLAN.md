@@ -181,6 +181,14 @@ Out of scope for R1/R2 themselves: scheduling, dashboards, dependencies and prio
 | `1-hive` | our deployment: compose files, pinned policy, registry, actors, and the host's own tools (watchdog, the Kev gate) | no (it's our instance) |
 
 *As built (2026-10-19):* the four Phase E repos planned here (supervisor, launcher, cos, notify) became two, `hive-runtime` and `hive-bridge`. The loop's pieces share one task-folder layout, key layout and launch contract, so they version together; split them only when a hive adopts one without the others. Both were extracted from `1-hive/tools` with their history, and 1-hive runs them at pinned tags (`deploy/hive.env`).
+
+**D17. Context capture: our addition to R6, for R9 (2026-10-27).**
+- **Not in the shared roadmap.** It's 1-hive's modification, kept here; we don't propose it to the other hives until our own use shows its worth (rule 3).
+- **The gap:** pins fix an attempt's inputs, not the context the model actually received: what a harness adds itself (system text, tool definitions), compaction, a long-lived agent's private memory. R9's replay from pinned context, diffs between runs and same-input model comparisons (R8) need it, and it can't be backfilled.
+- **Rule:** our runtime's context assembly is deterministic from pins (role prompt, R4 skill hashes, R8 route), or it captures what it adds: each part of the assembled context stored off the record under its content hash, and the result or report pinning one digest of the list (the `context` rel), as `route.decided`'s `log` binds the router's own log. Principle 4 holds: the record gets a reference, not the contents. No record spec change.
+- **Limits:** third-party harnesses may expose only part of their context. For long-lived agents with private memory (the proto-hive's bots) it serves debugging and drift, not exact replay, and needs the owner's agreement.
+- **When:** the rule binds hive-runtime's R6 work from now on; building the capture into the existing adapters is deferred (§9).
+- **Source:** Rémi Louf's AI Engineer 2026 talk "Agent Frameworks Considered Harmful" (content-addressed prompt parts, run diffs, replay against another model).
 ---
 
 ## 4. The contracts
@@ -189,7 +197,7 @@ The contracts now live in [`hive-record/SPEC.md`](https://github.com/1-hive/hive
 
 SPEC.md Appendix A lists where the spec departs from this plan's earlier drafts, e.g. one log per hive instead of per-run logs.
 
-**Proposed for the R6 interfaces, for R9 (2026-10-27).** Pins fix an attempt's inputs, not the context the model actually received: what a harness adds itself (system text, tool definitions), compaction, a long-lived agent's private memory. R9's replay from pinned context, diffs between runs and same-input model comparisons (R8) need it, and it can't be backfilled. So the runtime's context assembly must be deterministic from pins (role prompt, R4 skill hashes, R8 route), or it must capture what it adds: each part of the assembled context stored off the record under its content hash, and the result or report pinning one digest of the list (the `context` rel), as `route.decided`'s `log` binds the router's own log. Principle 4 holds: the record gets a reference, not the contents. Third-party harnesses may expose only part of their context; for long-lived agents with private memory it serves debugging and drift, not exact replay, and needs the owner's agreement. Source: Rémi Louf's AI Engineer 2026 talk "Agent Frameworks Considered Harmful" (content-addressed prompt parts, run diffs, replay against another model).
+Our runtime adds one contract of its own, not in the shared roadmap: context capture (D17).
 
 ---
 
@@ -297,7 +305,7 @@ Phase A is the gate. B and C overlap: test cases can be written against the spec
 | Model-diversity requirement for reviewers | R5, or a same-model review that let something slip |
 | Triage authority beyond its fixed menu; the governor's goal-relevance verdicts | An M3 trial wins it |
 | Chief-of-staff authority over the hive itself (changing its code, launching agents) | An M3 trial wins it |
-| Context capture in hive-runtime's adapters (the §4 R6 proposal) | R6's interfaces are frozen, a regression that couldn't be diagnosed without it, or R9 starts. The requirement itself isn't deferred: it goes into R6's interface notes now, since retrofitting costs more |
+| Context capture in hive-runtime's existing adapters (D17) | A regression that couldn't be diagnosed without it, or R9 starts. The rule itself isn't deferred: new runtime work follows it now, since retrofitting costs more |
 | Chat with the chief of staff as record events (R7's logging half; `message.*` is reserved) | Replaying or auditing the chief of staff's decisions needs it. Meanwhile hive-bridge keeps every message it sees in a dialogue log outside the record (v0.4.0) |
 
 ---
