@@ -6,16 +6,6 @@ qualifications: ~/work/1hive/route-qualifications.json
 pools:
   claude-plan:  [{reader: claude-stream, paths: ["~/work/1hive/*/worker-*.jsonl", "~/work/1hive/*/review-*.jsonl", "~/work/1hive/canary/*/*.out"]}]
   chatgpt-plan: [{reader: codex-sessions, paths: ["~/.codex/sessions"]}]
-  # SingularityCompute: down (no 2xx from its model list) means at a limit for 5 minutes,
-  # so each tier falls back to the paid plans.
-  singularity:  [{reader: http-health, paths: ["https://llm.a.singularitycompute.com/v1/models"], key_env: SINGULARITY_API_KEY, env_file: ~/.config/hive/singularity.env, down_minutes: 5}]
-  # Anthropic API: spend this month, from the gateway's spend logs (tag pool:anthropic-api).
-  # Its key check (http-health against Anthropic's model list, with auth_header: x-api-key) is off
-  # while the pool is out of the tiers: the key was revoked and can't be renewed (table v13).
-  anthropic-api: [{reader: gateway-spend, paths: ["http://127.0.0.1:4000"], key_env: HIVE_GATEWAY_KEY, env_file: ~/.config/hive/gateway.env}]
-
-# The hive gateway (deploy/gateway-up.sh), for routes with via_gateway.
-gateway: {url: "http://127.0.0.1:4000", key_env: HIVE_WORKER_KEY, env_file: ~/.config/hive/gateway.env}   # model calls only
 
 # Canaries (ROUTING.md §3): `hive-route canary run` starts harnesses with these commands,
 # the same way hive-runtime's launch-task.sh does, in a scratch folder per case.

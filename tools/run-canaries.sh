@@ -21,6 +21,5 @@ mkdir -p "$HOME/work/1hive/canary"
 # One group per pool, in parallel; each group's routes in turn.
 run "${MAX:-0.80}" sonnet-low sonnet-plan opus-plan > "$HOME/work/1hive/canary/claude.txt" 2>&1 &
 run "${MAX:-0.80}" gpt-sol-low gpt-sol-plan gpt-sol-high > "$HOME/work/1hive/canary/codex.txt" 2>&1 &
-run "${MAX:-0.80}" sc-gpt-oss-120b sc-qwen3.8-27b sc-deepseek-v4 sc-minimax-m3 > "$HOME/work/1hive/canary/singularity.txt" 2>&1 &
 wait
-cat "$HOME/work/1hive/canary/"{claude,codex,singularity}.txt | grep -E '^(== |[a-z0-9.-]+: (qualified|candidate))'
+cat "$HOME/work/1hive/canary/"{claude,codex}.txt | grep -E '^(== |[a-z0-9.-]+: (qualified|candidate))'

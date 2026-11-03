@@ -20,10 +20,10 @@ from pathlib import Path
 # The message goes out through hive-bridge's telegram-say.py, as installed by deploy/up.sh.
 SAY = Path.home() / ".local" / "share" / "1-hive" / "hive-bridge" / "telegram-say.py"
 STATE = Path.home() / ".local" / "share" / "1-hive" / "watchdog.json"
-CONTAINERS = ["1hive-pg", "hive-gw-pg"]
+CONTAINERS = ["1hive-pg"]
 SERVICES = [
     "1-hive-gateway", "1-hive-supervisor", "1-hive-dispatcher", "1-hive-cos", "1-hive-telegram",
-    "1-hive-floor", "1-hive-agent-ports", "hive-llm-gateway",
+    "1-hive-floor", "1-hive-agent-ports",
 ]
 JOBS = ["1-hive-backup", "1-hive-sweeper"]  # oneshots: only "failed" is a problem
 
