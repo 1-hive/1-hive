@@ -51,6 +51,7 @@ Open: WMTM goal lifecycle (stable IDs, dedup, states) + rating export, log only 
 
 Newest first. One line per milestone; an update to share is the lines since "Last shared".
 
+- 2026-11-03: 1-hive's route table v19 retires the unused Qwen scorer (Ollama) and, for security, the LiteLLM model gateway with every route through it (SingularityCompute, Anthropic API). Kev-4B stays as the shadow reader.
 - 2026-10-31: 1-hive's SOTA/XMage research task finally started. Its order had an invalid route value, so every launch was refused for 30 hours and only the journal showed it. A refused launch now reaches the chief of staff (hive-runtime v0.5.23, on 1-hive).
 - 2026-10-28: ProtoCosmo2 back after five days cut off; its wmtm README flags task went through review, publishing and a merge. Bots can no longer push to Ben's repos outside review.
 - 2026-10-27: First proto-hive code change merged upstream (iter #1: bots cite the Telegram message).
