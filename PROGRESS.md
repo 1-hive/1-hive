@@ -1,6 +1,6 @@
 # One Hive progress
 
-_Updated 2026-10-31. Last shared: never._
+_Updated 2026-11-02. Last shared: never._
 
 Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first one that isn't ours) has built for itself. [`PLAN.md`](PLAN.md) has the detail. The release plan counts a release done only when a hive other than the development team's runs it.
 
@@ -25,7 +25,7 @@ Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first 
 Each row is a task one of the proto-hive's bots did, which Astra reviewed and the chief of staff closed. Generated from its record by `tools/proto-hive-progress.sh --write`; don't edit by hand.
 
 <!-- proto-hive:begin -->
-12 tasks closed after an independent review; 0 open. Record position 320 (2026-10-28T16:48Z).
+14 tasks closed after an independent review; 1 open. Record position 373 (2026-11-03T01:07Z).
 
 | Closed | Project | Task | Bot | Reviews | Code |
 |---|---|---|---|---|---|
@@ -40,7 +40,11 @@ Each row is a task one of the proto-hive's bots did, which Astra reviewed and th
 | 2026-10-28 | iter | Apply the reviewed cite fix to ProtoCosmo2's live Iter (pop-os) | protocosmopopos | 3 | — |
 | 2026-10-28 | iter | Put per-bot transformation files (dashboard*.py, .runtime/) in protomega's shared .gitignore | protomegatron | 1 | [#3](https://github.com/bgoertzel-sing/iter/pull/3) merged |
 | 2026-10-28 | wmtm | wmtm README: section listing every flag in memory/_wmtm_flags.json | protocosmo2 | 7 | [#1](https://github.com/bgoertzel-sing/wmtm/pull/1) merged |
-| 2026-10-28 | wmtm | wmtm test: README flags section matches runtime_config.SPEC | protocosmo2 | 3 | `wmtm@30a1916` |
+| 2026-10-28 | wmtm | wmtm test: README flags section matches runtime_config.SPEC | protocosmo2 | 3 | [#2](https://github.com/bgoertzel-sing/wmtm/pull/2) merged |
+| 2026-10-28 | wmtm | Status of wmtm's goalchainer v2 migration on ProtoCosmo2, and its testing evidence (report only) | protocosmo2 | 4 | — |
+| 2026-10-28 | wmtm | Check for newer public versions of Roman's pettachainer and ManHin's semantic parser (report only) | protocosmo2 | 3 | — |
+
+Open: WMTM goal lifecycle (stable IDs, dedup, states) + rating export, log only (protocosmo2)
 <!-- proto-hive:end -->
 
 ## Log
