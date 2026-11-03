@@ -40,6 +40,7 @@ def key_hash() -> str:
 class Gate(BaseHTTPRequestHandler):
     server_version = "kev-gate"
     sys_version = ""
+    timeout = 30  # seconds per socket read; frees threads held by stalled clients
 
     def log_message(self, fmt, *args):  # one line per request, from _done; nothing else
         pass
