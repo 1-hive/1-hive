@@ -33,9 +33,14 @@
 # Version 19: the Qwen scorer (Ollama) retired: 3 scorings ever, none since 2026-09-30; Kev-4B's reader does the job.
 #   The hive gateway (LiteLLM) removed too, for security, and with it every via_gateway route: sc-deepseek-v4
 #   (the non-Claude review fallback when Codex is out), sc-qwen3.8-27b, api-opus and api-sonnet, and their pools.
+# Version 20: reviews below strong go to GPT-5.6 Sol first, Opus as the fallback (the operator, 2026-11-05):
+#   kind_floor review: standard, so no review is light, and review_tiers.standard puts gpt-sol-plan before opus-std
+#   (hive-route rev 21). RT4 still applies: work by Claude gets Sol (or waits for it), work by GPT gets Opus.
+#   Work keeps its own order (tiers); strong reviews are unchanged. Route pins unchanged: qualifications stay.
 format: hive-route.table/1
-version: 19
+version: 20
 prefer: order
+kind_floor: {review: standard}
 pools:
   claude-plan:  {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
   chatgpt-plan: {kind: subscription, limits: [{window: 5h}, {window: 7d}]}
@@ -54,6 +59,8 @@ tiers:
   strong:   [opus-plan, gpt-astra-high]
   standard: [opus-std, sonnet-plan, gpt-sol-plan]
   light:    [sonnet-low, gpt-sol-low]
+review_tiers:
+  standard: [gpt-sol-plan, opus-std]   # reviews below strong: Sol, then Opus
 # The reader (§4.8): Kev-4B reads every attempt's facts; shadow: logged, never used.
 reader: {route: kev-4b, mode: shadow, timeout_s: 10}
 # fixed mode: the launcher's models before routing, the baseline (§6).
