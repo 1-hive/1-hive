@@ -1,6 +1,6 @@
 # One Hive progress
 
-_Updated 2026-11-02. Last shared: never._
+_Updated 2026-11-09. Last shared: never._
 
 Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first one that isn't ours) has built for itself. [`PLAN.md`](PLAN.md) has the detail. The release plan counts a release done only when a hive other than the development team's runs it.
 
@@ -14,9 +14,9 @@ Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first 
 | R3 | Projections (read-only views) | Partial, 1-hive form | The Floor (`hive-bridge`) is a read-only board; runs on 1-hive and the proto-hive | Atomspace/OmegaClaw view not started |
 | R4 | Skills | Not started | — | — |
 | R5 | Review verdicts, independent review | Minimal form | `review.recorded` events; Astra reviews proto-hive work on another model | Model-diversity rule deferred (PLAN §9) |
-| R6 | Worker runtime | Minimal form | `hive-runtime` v0.5.23: launcher, dispatcher, supervisor; Iter sidecars for long-lived bots | Context capture (D17) for new runtime work |
-| R7 | Humans and agents talking | Partial | `hive-bridge` v0.5.12: Telegram bridge, chief of staff, work group; dialogue log outside the record | `message.*` events (the logging half) deferred |
-| R8 | Routing, canaries | Built, 1-hive only | `hive-route` runs live on 1-hive | Adoption by another hive |
+| R6 | Worker runtime | Minimal form | `hive-runtime` v0.5.47: launcher, dispatcher, supervisor; Iter and OpenClaw sidecars for long-lived bots; reviews routed by tier to long-lived reviewers; a second model account when one hits its limit | Context capture (D17) for new runtime work |
+| R7 | Humans and agents talking | Partial | `hive-bridge` v0.5.33: Telegram bridge, chief of staff, work group, decision cards answered by tapping; dialogue log outside the record | `message.*` events (the logging half) deferred |
+| R8 | Routing, canaries | Built; review routing adopted | `hive-route` runs live on 1-hive; rev 21 routes the proto-hive's reviews by tier to its long-lived reviewers (Astra, Fable, Sol) since 2026-11-05 | Work routing on another hive |
 | R9 | Replay, shadow trials | Not started | — | Needs context capture (D17) |
 | R10 | Writable shared memory | Not started | — | — |
 
@@ -25,7 +25,7 @@ Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first 
 Each row is a task one of the proto-hive's bots did, which Astra reviewed and the chief of staff closed. Generated from its record by `tools/proto-hive-progress.sh --write`; don't edit by hand.
 
 <!-- proto-hive:begin -->
-14 tasks closed after an independent review; 1 open. Record position 373 (2026-11-03T01:07Z).
+47 tasks closed after an independent review; 13 open. Record position 1729 (2026-11-09T17:33Z).
 
 | Closed | Project | Task | Bot | Reviews | Code |
 |---|---|---|---|---|---|
@@ -43,14 +43,50 @@ Each row is a task one of the proto-hive's bots did, which Astra reviewed and th
 | 2026-10-28 | wmtm | wmtm test: README flags section matches runtime_config.SPEC | protocosmo2 | 3 | [#2](https://github.com/bgoertzel-sing/wmtm/pull/2) merged |
 | 2026-10-28 | wmtm | Status of wmtm's goalchainer v2 migration on ProtoCosmo2, and its testing evidence (report only) | protocosmo2 | 4 | — |
 | 2026-10-28 | wmtm | Check for newer public versions of Roman's pettachainer and ManHin's semantic parser (report only) | protocosmo2 | 3 | — |
+| 2026-11-03 | wmtm | WMTM goal lifecycle (stable IDs, dedup, states) + rating export, log only | protocosmo2 | 11 | [#4](https://github.com/bgoertzel-sing/wmtm/pull/4) merged |
+| 2026-11-03 | wmtm | Evaluate rTreutlein/PeTTaChainer (49ca6f3) fitness for wmtm (report only) | protocosmo2 | 5 | — |
+| 2026-11-04 | wmtm | PeTTaChainer migration: write up shims, open items and options from existing work; commit shims (no more probing) | protocosmo2 | 5 | [#7](https://github.com/bgoertzel-sing/wmtm/pull/7) merged |
+| 2026-11-04 | wmtm | Could GoalChainer take PeTTaChainer's core mechanisms natively instead of shims? Analysis (report only) | protocosmo2 | 5 | — |
+| 2026-11-04 | wmtm | Track P / P2: WMTM adapter for Man Hin's template parser @ 1f1a7a6f + Anthropic provider PR | protomegabot2 | 8 | [#3](https://github.com/bgoertzel-sing/wmtm/pull/3) merged |
+| 2026-11-04 | wmtm | Track P / P2: measure the new parser on 30+ real ProtoCosmo2 notes on pop-os (ids and numbers only) | protocosmopopos | 3 | — |
+| 2026-11-05 | wmtm | Track P / P1: WMTM + GoalChainer on Roman's PeTTaChainer @ 202b9379 (242/242, end to end, repros upstream) | protocosmo2 | 7 | [#6](https://github.com/bgoertzel-sing/wmtm/pull/6) closed |
+| 2026-11-05 | wmtm | Track P: Man Hin's seeded rules on Roman's PeTTaChainer @ 202b9379, failures and fork comparison (report for Man Hin) | protocosmopopos | 5 | — |
+| 2026-11-05 | wmtm | Draft GitHub issues for Roman's PeTTaChainer: PC3/PC8, PY1-PY5, Man Hin-rule engine bugs (andy sends) | protocosmopopos | 2 | — |
+| 2026-11-05 | wmtm | Track P / P3: join P1 + P2 and A/B-replay against live wmtm (deploy readiness) | protocosmo2 | 4 | [#6](https://github.com/bgoertzel-sing/wmtm/pull/6) closed |
+| 2026-11-05 | mettadinc | MeTTaDinC E0: ingest docs and fixtures, structure the 8 milestones, pin and build Cetta (no implementation) | protocosmopopos | 1 | — |
+| 2026-11-05 | mettadinc | Seed the mettadinc repository with E0's documents, milestone files and Ben's decisions | protocosmopopos | 1 | [#1](https://github.com/bgoertzel-sing/mettadinc/pull/1) merged |
+| 2026-11-05 | mettadinc | MeTTaDinC M0 prerequisites: adopt the bundle registry patches, vendor Cetta @ 12da03b4, green-baseline harness | protocosmopopos | 1 | [#2](https://github.com/bgoertzel-sing/mettadinc/pull/2) closed |
+| 2026-11-06 | wmtm | Track P / P4: wmtm on Roman's and Man Hin's latest code, parser facts chaining, A/B vs live (strong review) | protocosmo2 | 5 | [#8](https://github.com/bgoertzel-sing/wmtm/pull/8) closed |
+| 2026-11-06 | wmtm | Track P / A v2: latest-upstream reruns; LIST-roman + LIST-manhin as a fork-vs-master gap map (carries over A's work) | protocosmopopos | 5 | — |
+| 2026-11-06 | mettadinc | Redo m0-prep with CeTTa as a submodule pinned to 12da03b (no copied CeTTa in history); rerun the green baseline | protocosmopopos | 1 | [#3](https://github.com/bgoertzel-sing/mettadinc/pull/3) merged |
+| 2026-11-06 | mettadinc | CeTTa at Zar's latest main: extension points, dialect vs native module, Mettapedia-dependent tests (report only; carries over cetta-latest) | protomegabot2 | 4 | — |
+| 2026-11-06 | cettapack | CettaPack M1: guarded hot match kernel in CeTTa (PathMap narrowing + native seeded rematch), differential tests, benchmark with guards | protocosmopopos | 2 | [#1](https://github.com/bgoertzel-sing/cettapack/pull/1) merged |
+| 2026-11-06 | mettadinc | MeTTaDinC: move the CeTTa submodule pin to Zar's latest main (4c285a97) and re-freeze the gcc green baseline | protocosmopopos | 2 | `mettadinc@476a79f` |
+| 2026-11-06 | hive-ops | ProtoMegaBot2: user-space gcc/Rust toolchain on vm2; prove the CeTTa gcc baseline reproduces exactly | protomegabot2 | 1 | — |
+| 2026-11-06 | hive-ops | ProtomegaTron: user-space gcc/Rust toolchain on vm2; prove the CeTTa gcc baseline reproduces exactly | protomegatron | 2 | — |
+| 2026-11-06 | hive-ops | protocosmo: user-space gcc/Rust toolchain on vm2; prove the CeTTa gcc baseline reproduces exactly | protocosmo | 1 | — |
+| 2026-11-06 | wmtm | Track P / P4 follow-up: note-free branch history, F7 as design, proof kind per answer, deploy flag vs Roman, review 3 loose ends | protocosmo2 | 3 | [#9](https://github.com/bgoertzel-sing/wmtm/pull/9) closed |
+| 2026-11-06 | wmtm | Track P: proof makeup (derivation / antecedent completion / population prior, nested) per answer in the P4 A/B; reporting only | protocosmo2 | 1 | [#10](https://github.com/bgoertzel-sing/wmtm/pull/10) merged |
+| 2026-11-06 | wmtm | Track P / F1: wmtm memory lifecycle and admission (Mesto review 1, 3, 4, 9, 11; drop MIN_CONFIDENCE; F7 both ways) | protocosmo2 | 2 | [#12](https://github.com/bgoertzel-sing/wmtm/pull/12) closed |
+| 2026-11-06 | wmtm | Track P / F2: wmtm context and goals (Mesto review 5, 7, 10; stemmer) | protocosmopopos | 1 | [#11](https://github.com/bgoertzel-sing/wmtm/pull/11) closed |
+| 2026-11-07 | wmtm | Track P: merge wmtm F1 + F2 into one tree; apply andy's 4 decisions (derive notes, source lookup, recent focus, ties as a choice) | protocosmo2 | 1 | [#13](https://github.com/bgoertzel-sing/wmtm/pull/13) merged |
+| 2026-11-08 | mettadinc | Redo cetta-pin-latest (476a79f) with the chat id scrubbed from all history; Supersedes t-2026-11-06-mettadinc-cetta-pin-latest | protocosmopopos | 1 | [#4](https://github.com/bgoertzel-sing/mettadinc/pull/4) merged |
+| 2026-11-08 | wmtm | Track P / F3 v3: answer v2 review 1 + andy's additions (inline §11, deploy line, criterion 5; native class-level check per dropped conclusion; is_derivation test) | protocosmo2 | 2 | [#14](https://github.com/bgoertzel-sing/wmtm/pull/14) closed |
+| 2026-11-08 | wmtm | Rerun LIST-roman on PeTTaChainer master (vm2, renamed repros); reviewed GitHub issue drafts for what is still broken (andy files) | protocosmo | 1 | — |
+| 2026-11-09 | mettadinc | MeTTaDinC M0 v2: continue the review-2 fixes from your folder (carries over t-2026-11-06-mettadinc-m0) | protomegabot2 | 2 | `mettadinc@5c91a95` |
+| 2026-11-09 | mettadinc | MeTTaDinC M0: rebase onto the scrubbed main (95e00d0) so it can publish; Supersedes t-2026-11-09-mettadinc-m0-v2 | protomegabot2 | 1 | [#5](https://github.com/bgoertzel-sing/mettadinc/pull/5) merged |
+| 2026-11-09 | wmtm | wmtm B flat Inheritance v2: check parser coverage of the 2 notes first; if our KB build drops the statements, fix it so the 2 lost correct conclusions come back and (chat_send valid) doesn't | protocosmo2 | 1 | [#15](https://github.com/bgoertzel-sing/wmtm/pull/15) merged |
 
-Open: WMTM goal lifecycle (stable IDs, dedup, states) + rating export, log only (protocosmo2)
+Open: What wmtm would need to change to run on rTreutlein/PeTTaChainer: migration plan and options (report only) (protocosmo2); Create bgoertzel-sing/mettadinc and seed it with E0's documents and milestone files (protocosmopopos); Track P / A: rerun every known engine and parser repro on Roman's and Man Hin's latest code; two plain lists for andy (protocosmopopos); MeTTaDinC: move the Cetta host to zariuq main (4c285a97), re-freeze the green baseline, re-map extension points, dialect vs native-module recommendation (protomegabot2); CettaPack M1: guarded hot match kernel in CeTTa (PathMap narrowing + native seeded rematch), differential tests, benchmark with guards (unassigned); MeTTaDinC M0: strict certificate boundaries: native CeTTa module, claims E05/E08/E09/H08/H10/H12/C01-C03, negative acceptance suite (protomegabot2); Track P / F3: A/B rerun of the fixed wmtm (F1+F2 merged) vs live on pop-os: count rule + Mesto §11, budget, warm-up (protocosmo2); Track P / F3 v2: drop wmtm's generic rules (mem_inh, inh_trans, imp_trans) on the PeTTaChainer path, then F3 result 2 with B on the fixed commit (protocosmo2); Rerun LIST-roman R1-R8 on PeTTaChainer master; reviewed GitHub issue drafts for what is still broken (andy files) (protocosmopopos); Roman issue drafts: rerun on PeTTaChainer b6aacc68, dedupe against #175-179, final paste-ready list (andy files) (protocosmo); wmtm B: emit flat Inheritance for class-level statements; F3's 2 lost correct conclusions come back, (chat_send valid) doesn't (protocosmo2); wmtm live-path replay before deploy (F3 criterion 5): sandbox turn loop with GoalChainer v2, A vs B, on b6aacc68; W1 by premise source notes (unassigned); wmtm live-path replay before deploy (F3 criterion 5): sandbox turn loop with GoalChainer v2, A vs B, on b6aacc68 (v2: W1 as in F3 v3) (protocosmo2)
 <!-- proto-hive:end -->
 
 ## Log
 
 Newest first. One line per milestone; an update to share is the lines since "Last shared".
 
+- 2026-11-08: A bot or reviewer whose model account runs out says so on the Floor and alerts the operators once, instead of looking idle; the chief of staff and OpenClaw gateways fall back to a second Claude account (hive-runtime v0.5.47, hive-bridge v0.5.33).
+- 2026-11-06: Decision cards: a question for a human is a short card, answered by tapping a button in the chat; the Floor's "Needs you" is grouped (Decide, Fix, Merge).
+- 2026-11-05: The proto-hive's reviews are routed by tier through hive-route rev 21, to three long-lived reviewers (Astra, Fable, Sol); a reviewer out of credits hands its reviews on. New repositories come from the hive by button (mettadinc first).
 - 2026-11-03: 1-hive's route table v19 retires the unused Qwen scorer (Ollama) and, for security, the LiteLLM model gateway with every route through it (SingularityCompute, Anthropic API). Kev-4B stays as the shadow reader.
 - 2026-10-31: 1-hive's SOTA/XMage research task finally started. Its order had an invalid route value, so every launch was refused for 30 hours and only the journal showed it. A refused launch now reaches the chief of staff (hive-runtime v0.5.23, on 1-hive).
 - 2026-10-28: ProtoCosmo2 back after five days cut off; its wmtm README flags task went through review, publishing and a merge. Bots can no longer push to Ben's repos outside review.
