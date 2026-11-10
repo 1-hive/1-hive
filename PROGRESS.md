@@ -1,6 +1,6 @@
 # One Hive progress
 
-_Updated 2026-11-09. Last shared: never._
+_Updated 2026-11-10. Last shared: never._
 
 Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first one that isn't ours) has built for itself. [`PLAN.md`](PLAN.md) has the detail. The release plan counts a release done only when a hive other than the development team's runs it.
 
@@ -14,8 +14,8 @@ Where One Hive's releases stand, and what the proto-hive (Ben's hive, the first 
 | R3 | Projections (read-only views) | Partial, 1-hive form | The Floor (`hive-bridge`) is a read-only board; runs on 1-hive and the proto-hive | Atomspace/OmegaClaw view not started |
 | R4 | Skills | Not started | — | — |
 | R5 | Review verdicts, independent review | **Built, adopted** | The review the close gate requires: an independent reviewer on another model, its verdict recorded as `review.recorded`; both hives use it (the proto-hive through Astra, Fable and Sol). Since `hive-runtime` v0.5.56 a 1-hive worker waits for the verdict in its own session and fixes a failed review there; `op review` asks for one by hand. [Review contract](https://github.com/1-hive/hive-runtime/blob/main/docs/review-contract.md) | Measure: share of tasks passing their first review, reviews per closed task, repeated findings |
-| R6 | Worker runtime | Minimal form | `hive-runtime` v0.5.56: launcher, dispatcher, supervisor; Iter and OpenClaw sidecars for long-lived bots; reviews routed by tier to long-lived reviewers; a second model account when one hits its limit; files attached to an order reach the agent | Context capture (D17) for new runtime work |
-| R7 | Humans and agents talking | Partial | `hive-bridge` v0.5.37: Telegram bridge, chief of staff, work group, decision cards answered by tapping; files people send reach the chief of staff (PDFs with a text copy); dialogue log outside the record | `message.*` events (the logging half) deferred |
+| R6 | Worker runtime | Minimal form | `hive-runtime` v0.5.59: launcher, dispatcher, supervisor (`op restart` gives a task it gave up on a fresh attempt); Iter and OpenClaw sidecars for long-lived bots; reviews routed by tier to long-lived reviewers; a second model account when one hits its limit; files attached to an order reach the agent | Context capture (D17) for new runtime work |
+| R7 | Humans and agents talking | Partial | `hive-bridge` v0.5.41: Telegram bridge, chief of staff, work group, decision cards answered by tapping; files people send reach the chief of staff (PDFs with a text copy), and it sends files and chat transcripts back; dialogue log outside the record | `message.*` events (the logging half) deferred |
 | R8 | Routing, canaries | Built; review routing adopted | `hive-route` runs live on 1-hive; rev 21 routes the proto-hive's reviews by tier to its long-lived reviewers (Astra, Fable, Sol) since 2026-11-05 | Work routing on another hive |
 | R9 | Replay, shadow trials | Not started | — | Needs context capture (D17) |
 | R10 | Writable shared memory | Not started | — | — |
@@ -89,6 +89,7 @@ Open: What wmtm would need to change to run on rTreutlein/PeTTaChainer: migratio
 
 Newest first. One line per milestone; an update to share is the lines since "Last shared".
 
+- 2026-11-10: R5's first real run on 1-hive (best-1b-fixes): the review failed on one skipped item, the worker fixed it in the same session and posted again a minute later, with no restart; it passed and closed 41 min after it started. A task the supervisor gave up on (repeated_failure) gets a fresh attempt from the operator: `op restart <task> [note]` or 🔁 Restart on the Telegram alert; before, the only way back was to cancel it and open a new task (hive-runtime v0.5.59, hive-bridge v0.5.41).
 - 2026-11-09: R5 as the release plan defines it: a 1-hive worker waits for its independent review in its own session and fixes a failed one with its context, instead of being restarted; a review can be asked for by hand (`op review`); the review contract is written down (hive-runtime v0.5.56). Before it, 48 of 1-hive's 87 reviews and 97 of the proto-hive's 150 didn't pass.
 - 2026-11-09: Files people send in Telegram reach the chief of staff (a PDF with a text copy), and it passes the ones a task needs to the worker with the order; a review too thin to show its checks, or re-assigned to the same reviewer, now runs again; a result posted while an escalation is open still gets its review; an agent that can't run gets one escalation instead of repeated nudges (hive-runtime v0.5.55, hive-bridge v0.5.37, both on 1-hive).
 - 2026-11-08: A bot or reviewer whose model account runs out says so on the Floor and alerts the operators once, instead of looking idle; the chief of staff and OpenClaw gateways fall back to a second Claude account (hive-runtime v0.5.47, hive-bridge v0.5.33).
