@@ -17,6 +17,18 @@ install_component hive-runtime "$HIVE_RUNTIME_REF" "$RUNTIME"
 install_component hive-bridge "$HIVE_BRIDGE_REF" "$BRIDGE"
 ln -sfn "$RUNTIME/op" "$HOME/.local/bin/op"
 
+log "hive-skills $HIVE_SKILLS_REF (the hive-skill command; every attempt loads deploy/skills.json's skills, One Hive R4)"
+uv tool install -q --force "git+https://github.com/1-hive/hive-skills@$HIVE_SKILLS_REF"
+SKILLS_REG=$DEPLOY_DIR/skills.json
+hive-skill --registry "$SKILLS_REG" list
+# A skill the deployed runtime ships differently from the one registered: agents keep loading the registered one
+# until it is registered again (docs/skills.md in hive-runtime).
+hive-skill --registry "$SKILLS_REG" --json list | jq -r '.skills[] | select(.pin.repository == "hive-runtime") | "\(.name) \(.pin.path) \(.pin.content_digest)"' |
+while read -r name path digest; do
+  have=$(hive-skill --json digest "$RUNTIME/$path" | jq -r '.content_digest // empty')
+  [ "$have" = "$digest" ] || echo "warning: hive-runtime $HIVE_RUNTIME_REF ships a different $name than skills.json registers; agents load the registered one. To use the new one: hive-skill --registry deploy/skills.json register hive-runtime $path --commit $HIVE_RUNTIME_REF --replace" >&2
+done
+
 if [ ! -f "$PG_ENV" ]; then
   log "new Postgres superuser password"
   umask 077; printf 'POSTGRES_PASSWORD=%s\n' "$(openssl rand -hex 24)" > "$PG_ENV"

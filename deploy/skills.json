@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "default_lifetime_days": 90,
+  "max_lifetime_days": 180,
+  "repositories": {
+    "hive-runtime": {
+      "fetch_urls": [
+        "https://github.com/1-hive/hive-runtime.git"
+      ],
+      "local_path": "~/.local/share/1-hive/hive-runtime"
+    }
+  },
+  "skills": [
+    {
+      "name": "hive-worker",
+      "pin": {
+        "version": 1,
+        "repository": "hive-runtime",
+        "commit_oid": "sha1:f80eadb733333d5857db5c4db0c9c2a0477265d0",
+        "path": "skills/hive-worker",
+        "kind": "tree",
+        "object_oid": "sha1:4c266c38cde3b9d0f23c96c127c9d3a0e3216000",
+        "content_digest": "sha256:a82d51648243f7e73d7747112fe1fa1a274ec2da771b468a7669fc26b19a7092"
+      },
+      "registered_at": "2026-11-10T23:21:27Z",
+      "expires_at": "2027-02-08T23:21:27Z",
+      "roles": [
+        "reviewer",
+        "worker"
+      ],
+      "harnesses": [],
+      "conflicts": [],
+      "note": "The worker contract with review-wait.py and result-refs.sh (hive-runtime v0.5.60)"
+    }
+  ]
+}
