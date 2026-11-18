@@ -16,14 +16,14 @@
       "pin": {
         "version": 1,
         "repository": "hive-runtime",
-        "commit_oid": "sha1:f80eadb733333d5857db5c4db0c9c2a0477265d0",
+        "commit_oid": "sha1:7cc835022d4b77483448c66a7cb934d9e006ae53",
         "path": "skills/hive-worker",
         "kind": "tree",
-        "object_oid": "sha1:4c266c38cde3b9d0f23c96c127c9d3a0e3216000",
-        "content_digest": "sha256:a82d51648243f7e73d7747112fe1fa1a274ec2da771b468a7669fc26b19a7092"
+        "object_oid": "sha1:f482891b101b9a5b418f797000445bb9ad3272d6",
+        "content_digest": "sha256:3f566c3a9b9e305968eef00dc2c4e9bf0e4936e6e78222f07a978bebf15108ae"
       },
-      "registered_at": "2026-11-10T23:21:27Z",
-      "expires_at": "2027-02-08T23:21:27Z",
+      "registered_at": "2026-11-18T21:20:31Z",
+      "expires_at": "2027-02-16T21:20:31Z",
       "roles": [
         "reviewer",
         "worker"
